@@ -1,20 +1,29 @@
-import { NativeTabs } from 'expo-router/unstable-native-tabs'
-
+import { Tabs, useLocalSearchParams } from 'expo-router'
 export default function BookTabsLayout() {
+	const params = useLocalSearchParams<{ 'book-id': string }>()
+	const initialParams = { 'book-id': params['book-id'] }
 	return (
-		<NativeTabs>
-			<NativeTabs.Trigger name='index'>
-				<NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
-			</NativeTabs.Trigger>
-			<NativeTabs.Trigger name='activity'>
-				<NativeTabs.Trigger.Label>Activity</NativeTabs.Trigger.Label>
-			</NativeTabs.Trigger>
-			<NativeTabs.Trigger name='reserves'>
-				<NativeTabs.Trigger.Label>Reserves</NativeTabs.Trigger.Label>
-			</NativeTabs.Trigger>
-			<NativeTabs.Trigger name='more'>
-				<NativeTabs.Trigger.Label>More</NativeTabs.Trigger.Label>
-			</NativeTabs.Trigger>
-		</NativeTabs>
+		<Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: '#0060c0' }}>
+			<Tabs.Screen
+				initialParams={initialParams}
+				name='index'
+				options={{ title: 'Accounts' }}
+			/>
+			<Tabs.Screen
+				initialParams={initialParams}
+				name='activity'
+				options={{ title: 'Activity' }}
+			/>
+			<Tabs.Screen
+				initialParams={initialParams}
+				name='more'
+				options={{ title: 'More' }}
+			/>
+			<Tabs.Screen
+				initialParams={initialParams}
+				name='reserves'
+				options={{ href: null }}
+			/>
+		</Tabs>
 	)
 }

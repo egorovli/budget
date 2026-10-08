@@ -1,193 +1,230 @@
+import { ActivityRows } from './prototype-activity.tsx'
+import { useState } from 'react'
+import { useBook } from '~/book/provider.tsx'
+import type { Book, Transaction } from '~/book/model.ts'
+import {
+	categoryPath,
+	filterTransactions,
+	formatAmount,
+	impliedRate,
+	isDate,
+	removeTransaction,
+	removeTransfer,
+	spending
+} from '~/book/model.ts'
 import {
 	ActionLink,
-	InlineLink,
+	ConfirmButton,
+	Field,
 	Metric,
-	MetricGrid,
 	Note,
 	PrototypeScreen,
-	RowLink,
 	Section,
+	SelectField,
 	StaticRow
 } from '~/components/prototype-ui.tsx'
-import {
-	accountHref,
-	accountsHref,
-	activityHref,
-	reserveHref,
-	reservesHref,
-	sampleAccountId,
-	sampleReserveId,
-	sampleTransactionId,
-	transactionHref
-} from '~/screens/prototype-routes.ts'
-
-interface BookScreenProps {
-	bookId: string
+import { AccountsScreen } from './prototype-accounts.tsx'
+import { activityHref } from './prototype-routes.ts'
+export function HomeScreen({ bookId }: { bookId: string }) {
+	return <AccountsScreen bookId={bookId} />
 }
-
-interface TransactionScreenProps extends BookScreenProps {
-	transactionId: string
+export function SpendingSummary({
+	book,
+	transactions
+}: {
+	book: Book
+	transactions: Transaction[]
+}) {
+	const summary = spending(transactions, book)
+	return (
+		<Section title='Spending in selected period'>
+			{Object.entries(summary.totals).map(([currency, amount]) => (
+				<StaticRow
+					key={currency}
+					label={currency}
+					value={formatAmount(amount, currency as Book['baseCurrency'])}
+				/>
+			))}
+			{Object.keys(summary.totals).length === 0 ? <Note>No Expenses in this period.</Note> : null}
+			{summary.base === null ? (
+				<Note>
+					{summary.missing} Expense(s) lack a stored conversion to {book.baseCurrency}. Per-currency
+					totals are shown.
+				</Note>
+			) : (
+				<StaticRow
+					label={`Base currency · stored rates · rounded to cents`}
+					value={formatAmount(summary.base, book.baseCurrency)}
+				/>
+			)}
+		</Section>
+	)
 }
-
-export function HomeScreen({ bookId }: BookScreenProps) {
+export function ActivityScreen(_props: { bookId: string }) {
+	const { book } = useBook()
+	const [text, setText] = useState('')
+	const [accountId, setAccountId] = useState('')
+	const [categoryId, setCategoryId] = useState('')
+	const [counterpartyId, setCounterpartyId] = useState('')
+	const [from, setFrom] = useState('')
+	const [to, setTo] = useState('')
+	const filter = { text, accountId, categoryId, counterpartyId, from, to }
+	const valid = (!from || isDate(from)) && (!to || isDate(to)) && (!from || !to || from <= to)
 	return (
 		<PrototypeScreen
-			description='The pre-purchase answer, followed by the financial context that explains it.'
-			eyebrow='FAMILY · PLN'
-			navigationTitle='Overview'
-			title='9,260 PLN free'
+			title='Activity'
+			description='Working Book. Same-day rows use stable IDs; their order does not imply an exact time.'
 		>
-			<MetricGrid>
-				<Metric
-					label='Available money'
-					value='12,460 PLN'
-				/>
-				<Metric
-					label='In Reserves'
-					value='3,200 PLN'
-				/>
-				<Metric
-					label='Net worth'
-					note='Includes investments'
-					value='48,920 PLN'
-				/>
-				<Metric
-					label='This month'
-					note='Expenses so far'
-					value='2,460 PLN'
-				/>
-			</MetricGrid>
-
 			<ActionLink
-				href={{
-					pathname: '/books/[book-id]/transactions/new',
-					params: { 'book-id': bookId }
-				}}
+				href={{ pathname: '/books/[book-id]/transactions/new', params: { 'book-id': book.id } }}
 				label='Record transaction'
 			/>
-
-			<Section
-				action={
-					<InlineLink
-						href={reservesHref(bookId)}
-						label='See all'
-					/>
-				}
-				title='Reserves'
-			>
-				<RowLink
-					detail='Tax payment'
-					href={reserveHref(bookId, sampleReserveId)}
-					label='Tax'
-					value='2,400 PLN'
-				/>
-				<RowLink
-					detail='Travel commitment'
-					href={reserveHref(bookId, 'asturias')}
-					label='Asturias'
-					value='800 PLN'
-				/>
-			</Section>
-
-			<Section
-				action={
-					<InlineLink
-						href={accountsHref(bookId)}
-						label='See all'
-					/>
-				}
-				title='Accounts'
-			>
-				<RowLink
-					detail='Transactional · PLN'
-					href={accountHref(bookId, sampleAccountId)}
-					label='mBank'
-					value='8,740 PLN'
-				/>
-				<RowLink
-					detail='Transactional · EUR'
-					href={accountHref(bookId, 'revolut')}
-					label='Revolut'
-					value='860 EUR'
-				/>
-			</Section>
-
-			<Section
-				action={
-					<InlineLink
-						href={activityHref(bookId)}
-						label='See all'
-					/>
-				}
-				title='Recent activity'
-			>
-				<TransactionRows
-					bookId={bookId}
-					limit={2}
-				/>
-			</Section>
-		</PrototypeScreen>
-	)
-}
-
-export function ActivityScreen({ bookId }: BookScreenProps) {
-	return (
-		<PrototypeScreen
-			description='A chronological view of expenses, income, transfers, and explicit corrections.'
-			title='Activity'
-		>
-			<Note>Search · All accounts · All types · This month</Note>
-			<Section title='Today'>
-				<TransactionRows
-					bookId={bookId}
-					limit={2}
-				/>
-			</Section>
-			<Section title='Yesterday'>
-				<TransactionRows bookId={bookId} />
-			</Section>
 			<ActionLink
-				href={{ pathname: '/books/[book-id]/reports', params: { 'book-id': bookId } }}
-				label='Open reports'
+				href={{ pathname: '/books/[book-id]/transfers/new', params: { 'book-id': book.id } }}
+				label='Transfer between Accounts'
 				secondary
 			/>
+			<Field
+				label='Search Activity'
+				value={text}
+				onChangeText={setText}
+			/>
+			<SelectField
+				label='Account filter'
+				value={accountId}
+				options={[
+					{ value: '', label: 'All Accounts' },
+					...book.accounts.map(item => ({ value: item.id, label: item.name }))
+				]}
+				onChange={setAccountId}
+			/>
+			<SelectField
+				label='Category filter · includes descendants'
+				value={categoryId}
+				options={[
+					{ value: '', label: 'All Categories' },
+					...book.categories.map(item => ({ value: item.id, label: categoryPath(book, item.id) }))
+				]}
+				onChange={setCategoryId}
+			/>
+			<SelectField
+				label='Counterparty filter'
+				value={counterpartyId}
+				options={[
+					{ value: '', label: 'All Counterparties' },
+					...book.counterparties.map(item => ({ value: item.id, label: item.name }))
+				]}
+				onChange={setCounterpartyId}
+			/>
+			<Field
+				label='From date · YYYY-MM-DD · optional'
+				value={from}
+				onChangeText={setFrom}
+			/>
+			<Field
+				label='To date · YYYY-MM-DD · optional'
+				value={to}
+				onChangeText={setTo}
+			/>
+			{valid ? (
+				<>
+					<SpendingSummary
+						book={book}
+						transactions={filterTransactions(book, filter)}
+					/>
+					<Section title='Activity'>
+						<ActivityRows
+							book={book}
+							filter={filter}
+						/>
+					</Section>
+				</>
+			) : (
+				<Note>Enter valid dates in ascending order.</Note>
+			)}
 		</PrototypeScreen>
 	)
 }
-
-export function TransactionDetailScreen({ bookId, transactionId }: TransactionScreenProps) {
+export function TransactionDetailScreen({
+	bookId,
+	transactionId
+}: {
+	bookId: string
+	transactionId: string
+}) {
+	const { book, update } = useBook()
+	const transaction = book.transactions.find(item => item.id === transactionId)
+	const account = book.accounts.find(item => item.id === transaction?.accountId)
+	if (!transaction || !account) {
+		return (
+			<PrototypeScreen title='Transaction not found'>
+				<ActionLink
+					href={activityHref(book.id)}
+					label='Open Activity'
+				/>
+			</PrototypeScreen>
+		)
+	}
 	return (
 		<PrototypeScreen
-			description={`Transaction fixture: ${transactionId}`}
-			eyebrow='EXPENSE · TODAY'
-			title='−186.40 PLN'
+			title={transaction.type}
+			description='Working Book · synthetic sample and manual records'
 		>
-			<Section title='Details'>
-				<StaticRow
-					label='Account'
-					value='mBank'
-				/>
-				<StaticRow
-					label='Counterparty'
-					value='Biedronka'
-				/>
-				<StaticRow
-					label='Category'
-					value='Food › Groceries'
-				/>
+			<Metric
+				label='Posted amount'
+				value={formatAmount(transaction.amount, account.currency)}
+			/>
+			<StaticRow
+				label='Account'
+				value={account.name}
+			/>
+			<StaticRow
+				label='Transaction date'
+				value={transaction.date}
+			/>
+			<StaticRow
+				label='Category'
+				value={categoryPath(book, transaction.categoryId ?? '') || 'None'}
+			/>
+			<StaticRow
+				label='Counterparty'
+				value={
+					book.counterparties.find(item => item.id === transaction.counterpartyId)?.name ?? 'None'
+				}
+			/>
+			{transaction.original ? (
 				<StaticRow
 					label='Original amount'
-					value='43.20 EUR'
+					value={formatAmount(transaction.original.amount, transaction.original.currency)}
 				/>
+			) : null}
+			{transaction.rate ? (
 				<StaticRow
-					label='Exchange rate'
-					value='4.3148 · manual'
+					label='Recorded rate'
+					value={`1 ${transaction.rate.from} = ${transaction.rate.value} ${transaction.rate.to} · ${transaction.rate.provenance}${transaction.rate.date ? ` · ${transaction.rate.date}` : ''}`}
 				/>
+			) : null}
+			{transaction.original &&
+			!transaction.rate &&
+			transaction.original.currency !== account.currency ? (
 				<StaticRow
-					label='Reserve used'
-					value='None'
+					label='Inferred rate · rounded'
+					value={`1 ${transaction.original.currency} = ${impliedRate(transaction.original.amount, transaction.amount)} ${account.currency}`}
 				/>
-			</Section>
+			) : null}
+			{transaction.occurredAt ? (
+				<StaticRow
+					label='Occurrence time'
+					value={transaction.occurredAt}
+				/>
+			) : null}
+			{transaction.location ? (
+				<StaticRow
+					label={`Expense location · ${transaction.location.simulated ? 'simulated' : 'recorded'}`}
+					value={`${transaction.location.latitude}, ${transaction.location.longitude}`}
+				/>
+			) : null}
+			<Note>{transaction.note || 'No note.'}</Note>
 			<ActionLink
 				href={{
 					pathname: '/books/[book-id]/transactions/[id]/edit',
@@ -195,73 +232,92 @@ export function TransactionDetailScreen({ bookId, transactionId }: TransactionSc
 				}}
 				label='Edit transaction'
 			/>
+			<ConfirmButton
+				label='Remove transaction'
+				explanation='Remove this manual Transaction? This changes the Account balance.'
+				onConfirm={() => update(current => removeTransaction(current, transactionId))}
+			/>
 			<ActionLink
 				href={activityHref(bookId)}
-				label='Back to activity'
+				label='Back to Activity'
 				secondary
 			/>
 		</PrototypeScreen>
 	)
 }
-
-export function MoreScreen({ bookId }: BookScreenProps) {
+export function TransferDetailScreen({ bookId, id }: { bookId: string; id: string }) {
+	const { book, update } = useBook()
+	const transfer = (book.transfers ?? []).find(item => item.id === id)
+	const from = book.accounts.find(item => item.id === transfer?.fromId)
+	const to = book.accounts.find(item => item.id === transfer?.toId)
+	if (!transfer || !from || !to) {
+		return (
+			<PrototypeScreen title='Transfer not found'>
+				<ActionLink
+					href={activityHref(bookId)}
+					label='Open Activity'
+				/>
+			</PrototypeScreen>
+		)
+	}
 	return (
-		<PrototypeScreen
-			description='Less frequent Book tools stay one level away from the core daily flow.'
-			title='More'
-		>
-			<Section title='Money'>
-				<RowLink
-					href={accountsHref(bookId)}
-					label='Accounts'
-					value='3 active'
+		<PrototypeScreen title='Transfer'>
+			<StaticRow
+				label={`Sent · ${from.name}`}
+				value={formatAmount(transfer.sent, from.currency)}
+			/>
+			<StaticRow
+				label={`Received · ${to.name}`}
+				value={formatAmount(transfer.received, to.currency)}
+			/>
+			<StaticRow
+				label='Transaction date'
+				value={transfer.date}
+			/>
+			{from.currency === to.currency ? null : (
+				<StaticRow
+					label='Inferred rate · rounded'
+					value={`1 ${from.currency} = ${impliedRate(transfer.sent, transfer.received)} ${to.currency}`}
 				/>
-				<RowLink
-					href={{ pathname: '/books/[book-id]/reports', params: { 'book-id': bookId } }}
-					label='Reports'
-				/>
-			</Section>
-			<Section title='Organization'>
-				<RowLink
-					href={{ pathname: '/books/[book-id]/categories', params: { 'book-id': bookId } }}
-					label='Categories'
-					value='8 active'
-				/>
-				<RowLink
-					href={{ pathname: '/books/[book-id]/counterparties', params: { 'book-id': bookId } }}
-					label='Counterparties'
-					value='14 active'
-				/>
-			</Section>
-			<Section title='Book'>
-				<RowLink
-					href={{ pathname: '/books/[book-id]/settings', params: { 'book-id': bookId } }}
-					label='Book settings'
-				/>
-				<RowLink
-					href='/books'
-					label='Switch Book'
-				/>
-			</Section>
+			)}
+			<Note>{transfer.note || 'No note.'}</Note>
+			<ActionLink
+				href={{
+					pathname: '/books/[book-id]/transfers/[id]/edit',
+					params: { 'book-id': bookId, id }
+				}}
+				label='Edit Transfer'
+			/>
+			<ConfirmButton
+				label='Remove Transfer'
+				explanation='Remove both sides of this Transfer?'
+				onConfirm={() => update(current => removeTransfer(current, id))}
+			/>
+			<ActionLink
+				href={activityHref(bookId)}
+				label='Open Activity'
+			/>
 		</PrototypeScreen>
 	)
 }
-
-function TransactionRows({ bookId, limit = 4 }: BookScreenProps & { limit?: number }) {
-	const transactions = [
-		['Biedronka', 'Today · Groceries', '−186.40 PLN', sampleTransactionId],
-		['Salary', 'Today · Income', '+8,200 PLN', 'salary'],
-		['mBank → Revolut', 'Yesterday · Transfer', '1,000 PLN', 'transfer'],
-		['Electricity', 'Yesterday · Home', '−420 PLN', 'electricity']
-	] as const
-
-	return transactions.slice(0, limit).map(([label, detail, value, id]) => (
-		<RowLink
-			detail={detail}
-			href={transactionHref(bookId, id)}
-			key={id}
-			label={label}
-			value={value}
-		/>
-	))
+export function MoreScreen({ bookId }: { bookId: string }) {
+	return (
+		<PrototypeScreen title='More'>
+			<ActionLink
+				href={{ pathname: '/books/[book-id]/categories', params: { 'book-id': bookId } }}
+				label='Categories'
+			/>
+			<ActionLink
+				href={{ pathname: '/books/[book-id]/counterparties', params: { 'book-id': bookId } }}
+				label='Counterparties'
+			/>
+			<ActionLink
+				href={{
+					pathname: '/books/[book-id]/settings/data-and-sync',
+					params: { 'book-id': bookId }
+				}}
+				label='Prototype data'
+			/>
+		</PrototypeScreen>
+	)
 }

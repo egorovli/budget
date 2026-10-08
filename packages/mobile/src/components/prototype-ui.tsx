@@ -1,9 +1,12 @@
+import { BookContext } from '~/book/context.ts'
 import '~/theme/index.ts'
 
 import type { Href } from 'expo-router'
-import { Link } from 'expo-router'
+import { Link, useLocalSearchParams } from 'expo-router'
 import { Stack } from 'expo-router/stack'
+import { useContext, useRef, useState } from 'react'
 import type { PropsWithChildren, ReactNode } from 'react'
+import type { TextInputProps } from 'react-native'
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { StyleSheet } from 'react-native-unistyles'
 
@@ -27,7 +30,7 @@ interface RowLinkProps {
 	value?: string
 }
 
-interface FieldProps {
+interface FieldProps extends Omit<TextInputProps, 'style'> {
 	defaultValue?: string | undefined
 	label: string
 	multiline?: boolean
@@ -52,12 +55,27 @@ export function PrototypeScreen({
 	navigationTitle,
 	title
 }: PrototypeScreenProps) {
+	const params = useLocalSearchParams<{ 'book-id'?: string }>()
+	const context = useContext(BookContext)
+	if (params['book-id'] && context && params['book-id'] !== context.book.id) {
+		return (
+			<>
+				<Stack.Title>Book not found</Stack.Title>
+				<View style={styles.screenContent}>
+					<Text style={styles.pageTitle}>Book not found</Text>
+					<Link href='/books'>Select the working Book</Link>
+				</View>
+			</>
+		)
+	}
+
 	return (
 		<>
 			<Stack.Title>{navigationTitle ?? title}</Stack.Title>
 			<ScrollView
 				contentContainerStyle={styles.screenContent}
 				contentInsetAdjustmentBehavior='automatic'
+				automaticallyAdjustKeyboardInsets
 				keyboardShouldPersistTaps='handled'
 				style={styles.screen}
 			>
@@ -152,11 +170,19 @@ export function MetricGrid({ children }: PropsWithChildren) {
 	return <View style={styles.metricGrid}>{children}</View>
 }
 
-export function Field({ defaultValue, label, multiline = false, placeholder }: FieldProps) {
+export function Field({
+	defaultValue,
+	label,
+	multiline = false,
+	placeholder,
+	...inputProps
+}: FieldProps) {
 	return (
 		<View style={styles.field}>
 			<Text style={styles.fieldLabel}>{label}</Text>
 			<TextInput
+				accessibilityLabel={label}
+				{...inputProps}
 				defaultValue={defaultValue}
 				multiline={multiline}
 				placeholder={placeholder}
@@ -212,6 +238,9 @@ const styles = StyleSheet.create(theme => ({
 		backgroundColor: theme.colors.background
 	},
 	screenContent: {
+		width: '100%',
+		maxWidth: 640,
+		alignSelf: 'center',
 		gap: theme.spacing(4),
 		padding: theme.spacing(4),
 		paddingBottom: theme.spacing(10)
@@ -278,6 +307,7 @@ const styles = StyleSheet.create(theme => ({
 		paddingVertical: theme.spacing(2)
 	},
 	rowCopy: {
+		minWidth: 0,
 		flex: 1,
 		gap: 2
 	},
@@ -291,6 +321,8 @@ const styles = StyleSheet.create(theme => ({
 		fontSize: 13
 	},
 	rowValue: {
+		flexShrink: 1,
+		maxWidth: '45%',
 		color: theme.colors.secondaryLabel,
 		fontSize: 14,
 		fontVariant: ['tabular-nums']
@@ -418,3 +450,141 @@ const styles = StyleSheet.create(theme => ({
 		height: 8
 	}
 }))
+
+export function ActionButton({
+	label,
+	onPress,
+	disabled = false
+}: {
+	label: string
+	onPress: () => void
+	disabled?: boolean
+}) {
+	return (
+		<Pressable
+			accessibilityRole='button'
+			accessibilityState={{ disabled }}
+			disabled={disabled}
+			onPress={onPress}
+			style={[styles.secondaryButton, disabled && { opacity: 0.5 }]}
+		>
+			<Text style={styles.buttonLabel}>{label}</Text>
+		</Pressable>
+	)
+}
+export function SelectField({
+	label,
+	value,
+	options,
+	onChange
+}: {
+	label: string
+	value: string
+	options: { value: string; label: string }[]
+	onChange: (value: string) => void
+}) {
+	const [search, setSearch] = useState('')
+	const [open, setOpen] = useState(false)
+	const selected = options.find(option => option.value === value)
+	return (
+		<View style={styles.field}>
+			<ActionButton
+				label={`${label}: ${selected?.label ?? 'Choose'}`}
+				onPress={() => setOpen(!open)}
+			/>
+			{open ? (
+				<>
+					<Field
+						label={`Search ${label}`}
+						value={search}
+						onChangeText={setSearch}
+					/>
+					<ScrollView
+						style={{ maxHeight: 240 }}
+						keyboardShouldPersistTaps='handled'
+					>
+						{options
+							.filter(option => option.label.toLowerCase().includes(search.toLowerCase()))
+							.map(option => (
+								<ActionButton
+									key={option.value}
+									label={option.label}
+									onPress={() => {
+										onChange(option.value)
+										setOpen(false)
+										setSearch('')
+									}}
+								/>
+							))}
+					</ScrollView>
+					{options.every(option => !option.label.toLowerCase().includes(search.toLowerCase())) ? (
+						<Note>No matches.</Note>
+					) : null}
+				</>
+			) : null}
+		</View>
+	)
+}
+export function ConfirmButton({
+	label,
+	explanation,
+	onConfirm
+}: {
+	label: string
+	explanation: string
+	onConfirm: () => Promise<void>
+}) {
+	const [open, setOpen] = useState(false)
+	const action = useAction()
+	return (
+		<>
+			<ActionButton
+				label={label}
+				onPress={() => setOpen(true)}
+			/>
+			{open ? (
+				<>
+					<Note>{explanation}</Note>
+					<ActionButton
+						label={`Confirm ${label}`}
+						disabled={action.busy}
+						onPress={() =>
+							action.run(async () => {
+								await onConfirm()
+								setOpen(false)
+							})
+						}
+					/>
+					<ActionButton
+						label='Cancel confirmation'
+						onPress={() => setOpen(false)}
+					/>
+				</>
+			) : null}
+			{action.error ? <Note>{action.error}</Note> : null}
+		</>
+	)
+}
+export function useAction() {
+	const lock = useRef(false)
+	const [busy, setBusy] = useState(false)
+	const [error, setError] = useState('')
+	return {
+		busy,
+		error,
+		run: (action: () => Promise<void>) => {
+			if (lock.current) {
+				return
+			}
+			lock.current = true
+			setBusy(true)
+			setError('')
+			void action()
+				.catch(reason => setError(reason instanceof Error ? reason.message : String(reason)))
+				.finally(() => {
+					lock.current = false
+					setBusy(false)
+				})
+		}
+	}
+}

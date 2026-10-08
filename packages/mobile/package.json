@@ -14,7 +14,10 @@
 		"skia:web:setup": "setup-skia-web",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
-		"types:check": "tsc --noEmit"
+		"types:check": "tsc --noEmit",
+		"test": "bun test tests",
+		"build:offline": "expo export --platform web --output-dir dist && bun scripts/prepare-offline.ts",
+		"preview:offline": "bun scripts/preview.ts"
 	},
 	"expo": {
 		"install": {

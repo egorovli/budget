@@ -10,6 +10,7 @@
 		"includes": [
 			"**",
 			"!!.agents/**/*",
+			"!!.worktrees/**/*",
 			"!!.claude/**/*",
 			"!!.git/**/*",
 			"!!.scratch/**/*",
@@ -208,6 +209,14 @@
 		}
 	},
 	"overrides": [
+		{
+			"includes": [
+				"packages/mobile/src/book/provider.tsx",
+				"packages/mobile/src/screens/prototype-source.tsx",
+				"packages/mobile/src/screens/prototype-organization.tsx"
+			],
+			"linter": { "rules": { "correctness": { "useImportExtensions": "off" } } }
+		},
 		{
 			"includes": ["**/tsconfig*.json"],
 			"json": {
