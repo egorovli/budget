@@ -12,6 +12,14 @@ For the chosen product experience, are envelope allocations a use of the existin
 
 ## Answer
 
-Resolved with the founder on 2026-10-21: deferred until after the first slice. Planning sits on top of the records and does not change Accounts, Transactions, Transfers, Categories or Counterparties, so the first slice does not depend on this choice.
+Resolved with the founder on 2026-10-21: Reserves + Free amount, in the simplest form. Envelopes are not used, and full allocation is not required. Reason: the user thinks about upcoming costs before spending and does not assign every unit of money; full allocation is what YNAB already does.
 
-The preliminary choice is Reserves + Free amount, with optional allocation. Reason: the user thinks about upcoming costs before spending and does not assign every unit of money; full allocation is what YNAB already does. We confirm or change this after a few weeks of use with real data. The glossary does not change now: Reserves and Free amount stay deferred. See [Decisions of 2026-10-21](../../../docs/product.md#decisions-of-2026-10-21).
+- A Reserve is a part of Available money set aside for an upcoming cost or goal. It has a name, an amount and an optional due date. It is not an Account and does not move money.
+- Free amount = Available money − active Reserves. It can be negative.
+- An ordinary Expense does not change a Reserve. A Reserve-funded expense reduces the selected Reserve in the same record.
+
+The glossary has these terms again. The first slice tests them ([issue 10](10-build-the-free-amount-slice.md)). See [Decisions of 2026-10-21](../../../docs/product.md#decisions-of-2026-10-21).
+
+## Comments
+
+2026-10-21: The first answer deferred this choice until after an import slice. The founder changed the first slice to the Free amount on the same day, so the choice is made now.

@@ -40,7 +40,7 @@ Colour shows an action or a selection. **Colour never means that money is safe t
 - **Purchase check is a preview.** It has one amount input, a short result ("Free after purchase $480") and **Done**. It records nothing, moves no money, and its Reserve default is None. Real expense entry is a separate flow with an explicit Save.
 - **Planning does not move money between Accounts.** Say this in the UI.
 
-These rules use Reserves and Free amount from the earlier model. They depend on open question 2 in [product.md](product.md).
+These rules use Reserves and Free amount as defined in [`GLOSSARY.md`](../GLOSSARY.md) (decision 2 in [product.md](product.md#decisions-of-2026-10-21)).
 
 ## Navigation
 
@@ -74,4 +74,4 @@ Known issue from the prototype: the dark primary button had 3.65:1 contrast ([au
 ## Not decided
 
 - The code of the browser prototype did not use Clarity. No production screens exist.
-- The envelope view ("All $5,000 assigned") and Reserves + Free amount were drawn as separate campaign hypotheses. The product model is still open.
+- The envelope view ("All $5,000 assigned") and Reserves + Free amount were drawn as separate campaign hypotheses. On 2026-10-21 we selected Reserves + Free amount; the envelope view is not used.

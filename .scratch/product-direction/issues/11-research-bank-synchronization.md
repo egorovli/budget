@@ -17,4 +17,4 @@ For each bank, find:
 
 ## Expected result
 
-A research file in `docs/research/` with primary sources, and one recommendation for each bank: synchronization, statement import only, or not possible. Note what is uncertain. This ticket does not block [issue 10](10-build-the-first-slice.md).
+A research file in `docs/research/` with primary sources, and one recommendation for each bank: synchronization, statement import only, or not possible. Note what is uncertain. This ticket does not block [issue 10](10-build-the-free-amount-slice.md).
