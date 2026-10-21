@@ -8,6 +8,10 @@ Status: 2026-10-21. This file is the single summary of the product decisions. Th
 
 This promise is a founder hypothesis. No user interviews or demand tests have been done.
 
+## Current stage
+
+Since 2026-10-21, we build Budgetly for the founder's own use, and we research what can be connected to it. We make no promise to other users. The measure of success: the founder uses the app every week and trusts its numbers. We decide the next step from that use, not from a full product plan.
+
 ## User
 
 - An individual or a household with several Accounts. The person thinks about upcoming costs before spending.
@@ -49,22 +53,35 @@ None of these qualities is unique: YNAB, Monarch, Copilot and Actual already hav
 | 2026-10-08 | Expense location is optional and needs consent | [capture notes](research/automatic-capture-and-local-assistance.md) |
 | 2026-10-08 | Money is stored as integer minor units; rates have an explicit direction and provenance | [prototype spec](archive/specs/browser-prototype.md) |
 | 2026-10-08 | Private statements stay outside Git; repository fixtures are synthetic | [map](archive/product-direction/map.md) |
+| 2026-10-21 | Build for the founder's own use first; no external promise | [issue 03](../.scratch/product-direction/issues/03-define-testable-product-promise.md) |
+| 2026-10-21 | No demand test now | [issue 06](../.scratch/product-direction/issues/06-design-demand-test-and-decision-rule.md) |
+| 2026-10-21 | The planning model is deferred until after the first slice; the preliminary choice is Reserves + Free amount with optional allocation | [issue 07](../.scratch/product-direction/issues/07-distinguish-envelopes-and-reserves.md) |
+| 2026-10-21 | The user sees Transactions and Transfers; each operation is stored as balance changes, one per Account, in that Account's currency | [Decisions of 2026-10-21](#decisions-of-2026-10-21) |
+| 2026-10-21 | Opening balance only; a balance difference is shown, never corrected automatically | [Decisions of 2026-10-21](#decisions-of-2026-10-21) |
+| 2026-10-21 | Statement import before live bank synchronization | [Decisions of 2026-10-21](#decisions-of-2026-10-21) |
+| 2026-10-21 | No market selection: base currency PLN, NBP rates, several currencies | [Decisions of 2026-10-21](#decisions-of-2026-10-21) |
+| 2026-10-21 | Household and agent access are outside the first slice; ADR 0002 stays valid | [Decisions of 2026-10-21](#decisions-of-2026-10-21) |
 
 Reserves, Free amount, Valuation accounts, Balance adjustments and Members are **deferred, not rejected**. Their earlier definitions are in [the previous glossary](archive/glossary-before-foundations-2026-10-08.md).
 
-## Open questions
+## Decisions of 2026-10-21
 
-These are the items to think through before production code. The order is by dependency.
+These answers follow from the current stage. Each one lets the first slice start. We review them after a few weeks of use with real data.
 
-1. **Core promise and experience** ([issue 03](../.scratch/product-direction/issues/03-define-testable-product-promise.md)). Which of bank sync, planning, reports, offline use and agent access does the promise need?
-2. **Envelopes or Reserves** ([issue 07](../.scratch/product-direction/issues/07-distinguish-envelopes-and-reserves.md)). Full allocation ("$0 left to assign") or Reserves + Free amount? Is full allocation optional? How does an expense affect an allocation?
-3. **Accounting model.** A double-entry journal behind the UI, or the current Transaction/Transfer model? Source records with provenance either way ([domain research](research/finance-standards-and-domain-model.md)).
-4. **Opening balance or Balance adjustment.** The prototype used Opening balance; the earlier model used Balance adjustments for reconciliation as well. Are both necessary?
-5. **Household.** What do Members share and control? If a household is part of the first promise, ADR 0002 must be reviewed.
-6. **Bank data.** Live bank sync or statement import first? Which institutions and which region?
-7. **Market and price.** Poland (PLN, NBP) or the US (USD, $9 per month in the campaign drafts)?
-8. **Agent access in the MVP.** Read-only Book access only, or also scenario requests such as the purchase check?
-9. **Demand validation** ([issue 06](../.scratch/product-direction/issues/06-design-demand-test-and-decision-rule.md)). Do we test demand before we build, or build for our own use first? No campaign has been run.
+1. **Promise** ([issue 03](../.scratch/product-direction/issues/03-define-testable-product-promise.md)). There is no external promise. The first slice covers step 1 of the everyday loop: get the picture current. Planning and the purchase check come later.
+2. **Envelopes or Reserves** ([issue 07](../.scratch/product-direction/issues/07-distinguish-envelopes-and-reserves.md)). Deferred. Planning sits on top of the records and does not change the foundations. The preliminary choice is Reserves + Free amount with optional allocation, because the user thinks about upcoming costs before spending and does not assign every unit of money. Full allocation is what YNAB already does.
+3. **Accounting model.** The user sees Transactions and Transfers. The storage keeps each operation as a set of balance changes. Each balance change belongs to one Account and is in that Account's currency. An Account balance is the sum of its balance changes. This minimal double entry covers Transfers between currencies with a fee, credit cards (an Account with a negative balance; a repayment is a Transfer) and refunds. Categories are not accounts, and the UI uses no accounting terms ([domain research](research/finance-standards-and-domain-model.md)).
+4. **Opening balance or Balance adjustment.** Opening balance only, taken from the statement. Reconciliation compares the calculated balance with the balance in the statement, as [`normalize-seed.py`](../scripts/normalize-seed.py) does. The app shows a difference and does not correct it ([principle 2](principles.md)). We add Balance adjustment only if a real difference needs an explicit record.
+5. **Household.** Outside the first slice. There is one user, and [ADR 0002](adr/0002-personal-icloud-sync-before-family-sharing.md) stays valid. The Book boundary ([ADR 0003](adr/0003-book-is-the-financial-and-sharing-boundary.md)) lets us add Members later.
+6. **Bank data.** Statement import first: Erste and Revolut CSV, TBank PDF. The normalizer already reads these formats, reconciles balances and links currency exchanges. Live synchronization is a separate research question ([issue 11](../.scratch/product-direction/issues/11-research-bank-synchronization.md)). If it is not possible, statement import still gives the product its value.
+7. **Market.** No market selection. The founder's data sets the defaults: base currency PLN, NBP rates, Accounts in PLN, EUR, USD, RUB and AMD.
+8. **Agent access.** Outside the first slice. A simple later experiment is a read-only MCP server on top of the Book export. It needs no change to the model.
+9. **Demand validation** ([issue 06](../.scratch/product-direction/issues/06-design-demand-test-and-decision-rule.md)). No demand test now. We return to it if we decide to show the product to other people.
+
+## Current work
+
+- [Issue 10](../.scratch/product-direction/issues/10-build-the-first-slice.md): the first slice. Import the founder's statements into a local Book; every Account balance agrees with the bank.
+- [Issue 11](../.scratch/product-direction/issues/11-research-bank-synchronization.md): research whether live synchronization with the founder's banks is possible for personal use. It does not block issue 10.
 
 ## Prototype history
 
