@@ -1,14 +1,16 @@
 import { expect, test } from 'bun:test'
-import type { Book, Expense } from '../src/book/model.ts'
+import type { Book, Expense, Transfer } from '../src/book/model.ts'
 import {
 	accountBalance,
 	createBook,
 	freeAmount,
 	recordBalance,
-	removeExpense,
+	removeRecord,
 	saveAccount,
 	saveExpense,
+	saveIncome,
 	saveReserve,
+	saveTransfer,
 	setRates,
 	validateBook
 } from '../src/book/model.ts'
@@ -77,7 +79,7 @@ test('a balance is the latest Reported balance minus the Expenses after it', () 
 	book = saveExpense(book, expense('e3', '700', '2026-09-30', '2026-10-02T11:00:00.000Z'))
 	expect(accountBalance(book, 'bank')).toMatchObject({ amount: '996500', difference: null })
 	expect(accountBalance(book, 'euro')).toMatchObject({ amount: null, latest: null })
-	expect(accountBalance(removeExpense(book, 'e1'), 'bank').amount).toBe('999000')
+	expect(accountBalance(removeRecord(book, 'e1'), 'bank').amount).toBe('999000')
 })
 
 test('a new Reported balance shows the Unrecorded difference and does not invent records', () => {
@@ -195,4 +197,45 @@ test('a snapshot survives a JSON round trip; invalid snapshots are rejected', ()
 	expect(() =>
 		validateBook({ ...book, balances: [{ ...book.balances[0], accountId: 'missing' }] })
 	).toThrow('Reported balances')
+})
+
+test('Income adds to the balance; a Transfer moves money between Accounts in their currencies', () => {
+	let book = setUp()
+	book = recordBalance(book, {
+		id: 'b3',
+		accountId: 'euro',
+		amount: '10000',
+		date: '2026-10-01',
+		recordedAt: '2026-10-01T09:00:00.000Z'
+	})
+	book = saveIncome(book, {
+		id: 'i1',
+		kind: 'income',
+		accountId: 'bank',
+		amount: '500000',
+		date: '2026-10-02',
+		note: 'Salary',
+		createdAt: '2026-10-02T10:00:00.000Z'
+	})
+	book = saveTransfer(book, {
+		id: 't1',
+		fromAccountId: 'bank',
+		toAccountId: 'euro',
+		sent: '43641',
+		received: '10000',
+		date: '2026-10-03',
+		note: '',
+		createdAt: '2026-10-03T10:00:00.000Z'
+	})
+	expect(accountBalance(book, 'bank').amount).toBe('1456359')
+	expect(accountBalance(book, 'euro').amount).toBe('20000')
+	expect(() =>
+		saveTransfer(book, { ...book.transfers[0], id: 't2', toAccountId: 'bank' } as Transfer)
+	).toThrow('two different')
+	const removed = removeRecord(book, 't1')
+	expect(accountBalance(removed, 'euro').amount).toBe('10000')
+	expect(validateBook(JSON.parse(JSON.stringify(book)))).toEqual(book)
+	// A Book saved before Transfers existed still opens.
+	const { transfers: _, ...old } = removed
+	expect(validateBook(old).transfers).toEqual([])
 })

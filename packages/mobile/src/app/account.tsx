@@ -2,18 +2,25 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useState } from 'react'
 import { saveAccount } from '~/book/model.ts'
 import type { Currency } from '~/book/money.ts'
-import { currencies } from '~/book/money.ts'
+import { currencies, isCurrency } from '~/book/money.ts'
 import { newId, useBook } from '~/book/provider.tsx'
 import { Button, Choice, ErrorText, Field, Screen, errorText, useClose } from '~/ui.tsx'
 
 export default function AccountScreen() {
 	const router = useRouter()
 	const close = useClose()
-	const { id } = useLocalSearchParams<{ id?: string }>()
+	const { id, ...draft } = useLocalSearchParams<{
+		id?: string
+		name?: string
+		amount?: string
+		currency?: string
+	}>()
 	const { book, update } = useBook()
 	const existing = book.accounts.find(item => item.id === id)
-	const [name, setName] = useState(existing?.name ?? '')
-	const [currency, setCurrency] = useState<Currency>(existing?.currency ?? book.baseCurrency)
+	const [name, setName] = useState(existing?.name ?? draft.name ?? '')
+	const [currency, setCurrency] = useState<Currency>(
+		existing?.currency ?? (isCurrency(draft.currency) ? draft.currency : book.baseCurrency)
+	)
 	const [available, setAvailable] = useState(existing?.available ?? true)
 	const [error, setError] = useState<string | null>(null)
 

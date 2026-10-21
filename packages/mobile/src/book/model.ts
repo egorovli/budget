@@ -37,6 +37,31 @@ export interface Expense {
 	reserveUse: ReserveUse | null
 }
 
+export interface Income {
+	id: string
+	kind: 'income'
+	accountId: string
+	/** Positive amount in the Account currency. */
+	amount: string
+	date: string
+	note: string
+	createdAt: string
+}
+
+export type Transaction = Expense | Income
+
+/** Money moved between two own Accounts. `sent` and `received` are in each Account's currency. */
+export interface Transfer {
+	id: string
+	fromAccountId: string
+	toAccountId: string
+	sent: string
+	received: string
+	date: string
+	note: string
+	createdAt: string
+}
+
 export interface Reserve {
 	id: string
 	name: string
@@ -63,7 +88,8 @@ export interface Book {
 	revision: number
 	accounts: Account[]
 	balances: ReportedBalance[]
-	transactions: Expense[]
+	transactions: Transaction[]
+	transfers: Transfer[]
 	reserves: Reserve[]
 	rates: Rate[]
 }
@@ -110,6 +136,7 @@ export function createBook(id: string): Book {
 		accounts: [],
 		balances: [],
 		transactions: [],
+		transfers: [],
 		reserves: [],
 		rates: []
 	}
@@ -121,30 +148,51 @@ function byTime(a: ReportedBalance, b: ReportedBalance): number {
 	return a.date.localeCompare(b.date) || a.recordedAt.localeCompare(b.recordedAt)
 }
 
+interface Change {
+	date: string
+	createdAt: string
+	amount: bigint
+}
+
+/** All balance changes of one Account: Expenses, Income and both sides of Transfers. */
+function changes(book: Book, accountId: string): Change[] {
+	const result: Change[] = []
+	for (const item of book.transactions) {
+		if (item.accountId === accountId) {
+			const amount = BigInt(item.amount)
+			result.push({ ...item, amount: item.kind === 'expense' ? -amount : amount })
+		}
+	}
+	for (const item of book.transfers) {
+		if (item.fromAccountId === accountId) {
+			result.push({ ...item, amount: -BigInt(item.sent) })
+		}
+		if (item.toAccountId === accountId) {
+			result.push({ ...item, amount: BigInt(item.received) })
+		}
+	}
+	return result
+}
+
 /**
- * An Expense is after a Reported balance when its date is later, or when it has the same date
- * and was recorded after the balance. A backdated Expense is already in the bank balance.
+ * A change is after a Reported balance when its date is later, or when it has the same date
+ * and was recorded after the balance. A backdated change is already in the bank balance.
  */
-function isAfter(expense: Expense, balance: ReportedBalance): boolean {
+function isAfter(change: Change, balance: ReportedBalance): boolean {
 	return (
-		expense.date > balance.date ||
-		(expense.date === balance.date && expense.createdAt > balance.recordedAt)
+		change.date > balance.date ||
+		(change.date === balance.date && change.createdAt > balance.recordedAt)
 	)
 }
 
-function expensesBetween(
-	book: Book,
-	accountId: string,
+function changeBetween(
+	all: readonly Change[],
 	from: ReportedBalance,
 	to: ReportedBalance | null
-): string {
-	return sum(
-		book.transactions
-			.filter(
-				item => item.accountId === accountId && isAfter(item, from) && !(to && isAfter(item, to))
-			)
-			.map(item => item.amount)
-	)
+): bigint {
+	return all
+		.filter(item => isAfter(item, from) && !(to && isAfter(item, to)))
+		.reduce((total, item) => total + item.amount, 0n)
 }
 
 export interface AccountBalance {
@@ -161,21 +209,23 @@ export function accountBalance(book: Book, accountId: string): AccountBalance {
 	if (!latest) {
 		return { amount: null, latest: null, difference: null }
 	}
-	const amount = BigInt(latest.amount) - BigInt(expensesBetween(book, accountId, latest, null))
+	const all = changes(book, accountId)
+	const amount = BigInt(latest.amount) + changeBetween(all, latest, null)
 	const previous = history.at(-2)
 	let difference: string | null = null
 	if (previous) {
-		const expected =
-			BigInt(previous.amount) - BigInt(expensesBetween(book, accountId, previous, latest))
+		const expected = BigInt(previous.amount) + changeBetween(all, previous, latest)
 		difference = (BigInt(latest.amount) - expected).toString()
 	}
 	return { amount: amount.toString(), latest, difference }
 }
 
 export function reserveRemaining(book: Book, reserve: Reserve): string {
-	const used = book.transactions
-		.filter(item => item.reserveUse?.reserveId === reserve.id)
-		.map(item => item.reserveUse?.amount ?? '0')
+	const used = book.transactions.flatMap(item =>
+		item.kind === 'expense' && item.reserveUse?.reserveId === reserve.id
+			? [item.reserveUse.amount]
+			: []
+	)
 	return (BigInt(reserve.amount) - BigInt(sum(used))).toString()
 }
 
@@ -261,7 +311,8 @@ export function saveAccount(book: Book, account: Account): Book {
 function hasRecords(book: Book, accountId: string): boolean {
 	return (
 		book.balances.some(item => item.accountId === accountId) ||
-		book.transactions.some(item => item.accountId === accountId)
+		book.transactions.some(item => item.accountId === accountId) ||
+		book.transfers.some(item => item.fromAccountId === accountId || item.toAccountId === accountId)
 	)
 }
 
@@ -274,16 +325,30 @@ export function saveExpense(book: Book, expense: Expense): Book {
 		const { reserveId } = expense.reserveUse
 		const reserve = book.reserves.find(item => item.id === reserveId)
 		const previous = book.transactions.find(item => item.id === expense.id)
+		const previousReserve = previous?.kind === 'expense' ? previous.reserveUse?.reserveId : null
 		ensure(
-			reserve && (reserve.closedAt === null || previous?.reserveUse?.reserveId === reserveId),
+			reserve && (reserve.closedAt === null || previousReserve === reserveId),
 			'Select an open Reserve.'
 		)
 	}
 	return next(book, { transactions: replace(book.transactions, expense) })
 }
 
-export function removeExpense(book: Book, id: string): Book {
-	return next(book, { transactions: book.transactions.filter(item => item.id !== id) })
+export function saveIncome(book: Book, income: Income): Book {
+	return next(book, { transactions: replace(book.transactions, income) })
+}
+
+export function saveTransfer(book: Book, transfer: Transfer): Book {
+	ensure(transfer.fromAccountId !== transfer.toAccountId, 'Select two different Accounts.')
+	return next(book, { transfers: replace(book.transfers, transfer) })
+}
+
+/** Removes a Transaction or a Transfer. */
+export function removeRecord(book: Book, id: string): Book {
+	return next(book, {
+		transactions: book.transactions.filter(item => item.id !== id),
+		transfers: book.transfers.filter(item => item.id !== id)
+	})
 }
 
 export function saveReserve(book: Book, reserve: Reserve): Book {
@@ -291,7 +356,9 @@ export function saveReserve(book: Book, reserve: Reserve): Book {
 	ensure(
 		!existing ||
 			existing.currency === reserve.currency ||
-			!book.transactions.some(item => item.reserveUse?.reserveId === reserve.id),
+			!book.transactions.some(
+				item => item.kind === 'expense' && item.reserveUse?.reserveId === reserve.id
+			),
 		'Expenses already use this Reserve. Its currency cannot change.'
 	)
 	return next(book, { reserves: replace(book.reserves, reserve) })
@@ -336,7 +403,8 @@ function isPositive(value: unknown): value is string {
 
 export function validateBook(value: unknown): Book {
 	ensure(value && typeof value === 'object', 'Expected a Book.')
-	const book = value as Book
+	// Books saved before Transfers existed have no `transfers` list.
+	const book = { transfers: [], ...(value as object) } as unknown as Book
 	ensure(book.schema === 1, 'Unsupported Book version. Keep the file and use a newer app.')
 	ensure(
 		isText(book.id) &&
@@ -377,18 +445,32 @@ export function validateBook(value: unknown): Book {
 			(item.closedAt === null || isInstant(item.closedAt))
 	)
 	const reserveIds = new Set(reserves.map(item => item.id))
-	records<Expense>(
+	records<Transaction>(
 		book.transactions,
-		'Expenses',
+		'Transactions',
 		item =>
-			item.kind === 'expense' &&
 			accountIds.has(item.accountId) &&
 			isPositive(item.amount) &&
 			isDate(item.date) &&
 			typeof item.note === 'string' &&
 			isInstant(item.createdAt) &&
-			(item.reserveUse === null ||
-				(reserveIds.has(item.reserveUse.reserveId) && isPositive(item.reserveUse.amount)))
+			(item.kind === 'income' ||
+				(item.kind === 'expense' &&
+					(item.reserveUse === null ||
+						(reserveIds.has(item.reserveUse.reserveId) && isPositive(item.reserveUse.amount)))))
+	)
+	records<Transfer>(
+		book.transfers,
+		'Transfers',
+		item =>
+			accountIds.has(item.fromAccountId) &&
+			accountIds.has(item.toAccountId) &&
+			item.fromAccountId !== item.toAccountId &&
+			isPositive(item.sent) &&
+			isPositive(item.received) &&
+			isDate(item.date) &&
+			typeof item.note === 'string' &&
+			isInstant(item.createdAt)
 	)
 	ensure(Array.isArray(book.rates), 'Rates: expected a list.')
 	const rateCurrencies = new Set<string>()

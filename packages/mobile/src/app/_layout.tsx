@@ -31,7 +31,7 @@ function Content() {
 			/>
 			<Stack.Screen
 				name='expense'
-				options={{ title: 'Expense', presentation: 'modal' }}
+				options={{ title: 'Expense or income', presentation: 'modal' }}
 			/>
 			<Stack.Screen
 				name='balance'
@@ -44,6 +44,14 @@ function Content() {
 			<Stack.Screen
 				name='reserve'
 				options={{ title: 'Reserve', presentation: 'modal' }}
+			/>
+			<Stack.Screen
+				name='transfer'
+				options={{ title: 'Transfer', presentation: 'modal' }}
+			/>
+			<Stack.Screen
+				name='ai'
+				options={{ title: 'AI on this device' }}
 			/>
 			<Stack.Screen
 				name='settings'

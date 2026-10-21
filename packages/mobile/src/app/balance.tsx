@@ -9,11 +9,12 @@ import { Button, Empty, ErrorText, Field, Row, Screen, styles, errorText, useClo
 export default function BalanceScreen() {
 	const router = useRouter()
 	const close = useClose()
-	const { accountId } = useLocalSearchParams<{ accountId: string }>()
+	const params = useLocalSearchParams<{ accountId: string; amount?: string; date?: string }>()
+	const { accountId } = params
 	const { book, update } = useBook()
 	const account = book.accounts.find(item => item.id === accountId)
-	const [amount, setAmount] = useState('')
-	const [date, setDate] = useState(today())
+	const [amount, setAmount] = useState(params.amount ?? '')
+	const [date, setDate] = useState(params.date ?? today())
 	const [error, setError] = useState<string | null>(null)
 
 	if (!account) {

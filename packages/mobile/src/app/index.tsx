@@ -3,6 +3,7 @@ import { Text, View } from 'react-native'
 import { accountBalance, freeAmount, reserveRemaining } from '~/book/model.ts'
 import { formatAmount } from '~/book/money.ts'
 import { useBook } from '~/book/provider.tsx'
+import { CommandBar } from '~/commands/command-bar.tsx'
 import { Button, Empty, Row, Screen, Section, styles } from '~/ui.tsx'
 
 export default function Overview() {
@@ -16,12 +17,13 @@ export default function Overview() {
 		...result.currenciesWithoutRate.map(code => `no rate for ${code}`)
 	]
 	const openReserves = book.reserves.filter(reserve => reserve.closedAt === null)
-	const recent = book.transactions
+	const recent = [...book.transactions, ...book.transfers]
 		.toSorted((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt))
 		.slice(0, 10)
 
 	return (
 		<Screen>
+			<CommandBar />
 			<View
 				style={styles.section}
 				accessible={true}
@@ -51,10 +53,6 @@ export default function Overview() {
 					warning={incomplete.length > 0 ? `Incomplete: ${incomplete.join('; ')}.` : null}
 				/>
 			</View>
-			<Button
-				title='Add an expense'
-				onPress={() => router.push('/expense')}
-			/>
 
 			<Section title='Accounts'>
 				{book.accounts.length === 0 ? <Empty>Add the Accounts that you use to pay.</Empty> : null}
@@ -118,25 +116,59 @@ export default function Overview() {
 				onPress={() => router.push('/reserve')}
 			/>
 
-			<Section title='Recent expenses'>
-				{recent.length === 0 ? <Empty>No expenses yet.</Empty> : null}
-				{recent.map(expense => {
-					const account = book.accounts.find(item => item.id === expense.accountId)
-					const reserve = book.reserves.find(item => item.id === expense.reserveUse?.reserveId)
+			<View style={styles.actions}>
+				<Button
+					title='Add an expense'
+					onPress={() => router.push('/expense')}
+				/>
+				<Button
+					kind='secondary'
+					title='Transfer'
+					onPress={() => router.push('/transfer')}
+				/>
+			</View>
+
+			<Section title='Recent activity'>
+				{recent.length === 0 ? <Empty>Nothing recorded yet.</Empty> : null}
+				{recent.map(item => {
+					if (!('kind' in item)) {
+						const from = book.accounts.find(entry => entry.id === item.fromAccountId)
+						const to = book.accounts.find(entry => entry.id === item.toAccountId)
+						return (
+							<Row
+								key={item.id}
+								label={`${from?.name ?? '?'} → ${to?.name ?? '?'}`}
+								value={from ? formatAmount(item.sent, from.currency) : ''}
+								detail={[item.date, 'Transfer', item.note].filter(Boolean).join(' · ')}
+								onPress={() => router.push({ pathname: '/transfer', params: { id: item.id } })}
+							/>
+						)
+					}
+					const account = book.accounts.find(entry => entry.id === item.accountId)
+					const reserve =
+						item.kind === 'expense'
+							? book.reserves.find(entry => entry.id === item.reserveUse?.reserveId)
+							: undefined
+					const sign = item.kind === 'expense' ? '-' : ''
 					return (
 						<Row
-							key={expense.id}
-							label={expense.note || account?.name || 'Expense'}
-							value={account ? formatAmount(`-${expense.amount}`, account.currency) : ''}
-							detail={[expense.date, expense.note ? account?.name : null, reserve?.name]
+							key={item.id}
+							label={item.note || account?.name || item.kind}
+							value={account ? formatAmount(`${sign}${item.amount}`, account.currency) : ''}
+							detail={[item.date, item.note ? account?.name : null, reserve?.name]
 								.filter(Boolean)
 								.join(' · ')}
-							onPress={() => router.push({ pathname: '/expense', params: { id: expense.id } })}
+							onPress={() => router.push({ pathname: '/expense', params: { id: item.id } })}
 						/>
 					)
 				})}
 			</Section>
 
+			<Button
+				kind='secondary'
+				title='AI on this device'
+				onPress={() => router.push('/ai')}
+			/>
 			<Button
 				kind='secondary'
 				title='Rates and data'

@@ -9,7 +9,11 @@
 		"ios": {
 			"supportsTablet": false,
 			"bundleIdentifier": "io.egorov.budgetly",
-			"appleTeamId": "MG48329H8U"
+			"appleTeamId": "MG48329H8U",
+			"infoPlist": {
+				"NSMicrophoneUsageDescription": "Budgetly listens when you tap the microphone, to turn what you say into an expense or a transfer. Audio stays on this iPhone.",
+				"NSSpeechRecognitionUsageDescription": "Budgetly turns what you say into text on this iPhone. Your speech is not sent to a server."
+			}
 		},
 		"android": {
 			"adaptiveIcon": {

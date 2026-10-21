@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { View } from 'react-native'
 import { isDate, reserveRemaining, saveReserve } from '~/book/model.ts'
 import type { Currency } from '~/book/money.ts'
-import { currencies, formatAmount, formatInput, parseAmount } from '~/book/money.ts'
+import { currencies, formatAmount, formatInput, isCurrency, parseAmount } from '~/book/money.ts'
 import { newId, useBook } from '~/book/provider.tsx'
 import {
 	Button,
@@ -20,12 +20,21 @@ import {
 
 export default function ReserveScreen() {
 	const close = useClose()
-	const { id } = useLocalSearchParams<{ id?: string }>()
+	const { id, ...draft } = useLocalSearchParams<{
+		id?: string
+		name?: string
+		amount?: string
+		currency?: string
+	}>()
 	const { book, update } = useBook()
 	const existing = book.reserves.find(item => item.id === id)
-	const [name, setName] = useState(existing?.name ?? '')
-	const [amount, setAmount] = useState(existing ? formatInput(existing.amount) : '')
-	const [currency, setCurrency] = useState<Currency>(existing?.currency ?? book.baseCurrency)
+	const [name, setName] = useState(existing?.name ?? draft.name ?? '')
+	const [amount, setAmount] = useState(
+		existing ? formatInput(existing.amount) : (draft.amount ?? '')
+	)
+	const [currency, setCurrency] = useState<Currency>(
+		existing?.currency ?? (isCurrency(draft.currency) ? draft.currency : book.baseCurrency)
+	)
 	const [dueDate, setDueDate] = useState(existing?.dueDate ?? '')
 	const [error, setError] = useState<string | null>(null)
 

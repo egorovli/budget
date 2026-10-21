@@ -48,7 +48,7 @@ interface RowProps {
 	value?: string
 	detail?: string | null
 	warning?: string | null
-	onPress?: () => void
+	onPress?: (() => void) | undefined
 }
 
 export function Row({ label, value, detail, warning, onPress }: RowProps) {
@@ -135,14 +135,31 @@ export function ConfirmButton({
 	)
 }
 
-export function Field({ label, ...props }: TextInputProps & { label: string }) {
+/** A label that asks the user to check a value that an interpreter guessed. */
+function Label({ label, check }: { label: string; check: boolean }) {
+	return (
+		<Text style={styles.label}>
+			{label}
+			{check ? <Text style={styles.check}> · check this</Text> : null}
+		</Text>
+	)
+}
+
+export function Field({
+	label,
+	check = false,
+	...props
+}: TextInputProps & { label: string; check?: boolean }) {
 	return (
 		<View style={styles.field}>
-			<Text style={styles.label}>{label}</Text>
+			<Label
+				label={label}
+				check={check}
+			/>
 			<TextInput
-				accessibilityLabel={label}
+				accessibilityLabel={check ? `${label}, check this` : label}
 				placeholderTextColor={colors.secondary}
-				style={styles.input}
+				style={[styles.input, check && styles.inputCheck]}
 				{...props}
 			/>
 		</View>
@@ -153,12 +170,14 @@ export function Choice<T extends string>({
 	label,
 	options,
 	value,
-	onChange
+	onChange,
+	check = false
 }: {
 	label: string
 	options: readonly { value: T; label: string }[]
 	value: T
 	onChange: (value: T) => void
+	check?: boolean
 }) {
 	return (
 		<View
@@ -166,7 +185,10 @@ export function Choice<T extends string>({
 			accessibilityRole='radiogroup'
 			accessibilityLabel={label}
 		>
-			<Text style={styles.label}>{label}</Text>
+			<Label
+				label={label}
+				check={check}
+			/>
 			<View style={styles.choices}>
 				{options.map(option => {
 					const selected = option.value === value
@@ -247,6 +269,8 @@ export const styles = StyleSheet.create({
 	secondaryText: { color: colors.action, fontSize: 17, fontWeight: '600' },
 	field: { gap: 6 },
 	label: { fontSize: 14, color: colors.secondary },
+	check: { color: colors.warning, fontWeight: '600' },
+	inputCheck: { borderWidth: 2, borderColor: colors.warning },
 	input: {
 		minHeight: 48,
 		backgroundColor: colors.surface,
@@ -265,8 +289,9 @@ export const styles = StyleSheet.create({
 	},
 	choiceSelected: { backgroundColor: colors.action },
 	choiceSelectedText: { fontSize: 17, color: '#FFFFFF', fontWeight: '600' },
-	answer: { fontSize: 56, fontWeight: '700', color: colors.ink, fontVariant: ['tabular-nums'] },
+	answer: { fontSize: 48, fontWeight: '700', color: colors.ink, fontVariant: ['tabular-nums'] },
 	answerLabel: { fontSize: 17, color: colors.secondary },
+	actions: { gap: 8 },
 	preview: { backgroundColor: colors.preview, borderRadius: 14, padding: 16, gap: 4 }
 })
 
