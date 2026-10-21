@@ -21,7 +21,6 @@
 			"!!packages/mobile/android/**/*",
 			"!!packages/mobile/assets/**/*",
 			"!!packages/mobile/ios/**/*",
-			"!!prototypes/**/*",
 			"!!skills-lock.json"
 		]
 	},
@@ -210,14 +209,6 @@
 	},
 	"overrides": [
 		{
-			"includes": [
-				"packages/mobile/src/book/provider.tsx",
-				"packages/mobile/src/screens/prototype-source.tsx",
-				"packages/mobile/src/screens/prototype-organization.tsx"
-			],
-			"linter": { "rules": { "correctness": { "useImportExtensions": "off" } } }
-		},
-		{
 			"includes": ["**/tsconfig*.json"],
 			"json": {
 				"parser": {
@@ -233,16 +224,6 @@
 					"style": {
 						"noDefaultExport": "off",
 						"useFilenamingConvention": "off"
-					}
-				}
-			}
-		},
-		{
-			"includes": ["packages/mobile/scripts/**/*.js"],
-			"linter": {
-				"rules": {
-					"style": {
-						"noCommonJs": "off"
 					}
 				}
 			}

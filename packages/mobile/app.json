@@ -1,0 +1,35 @@
+{
+	"expo": {
+		"name": "Budgetly",
+		"slug": "budgetly",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "light",
+		"ios": {
+			"supportsTablet": false,
+			"bundleIdentifier": "io.egorov.budgetly",
+			"appleTeamId": "MG48329H8U"
+		},
+		"android": {
+			"adaptiveIcon": {
+				"backgroundColor": "#E6F4FE",
+				"foregroundImage": "./assets/android-icon-foreground.png",
+				"backgroundImage": "./assets/android-icon-background.png",
+				"monochromeImage": "./assets/android-icon-monochrome.png"
+			},
+			"predictiveBackGestureEnabled": false,
+			"package": "io.egorov.budgetly"
+		},
+		"web": {
+			"bundler": "metro",
+			"output": "single",
+			"favicon": "./assets/favicon.png"
+		},
+		"plugins": ["expo-router", "expo-sqlite", "expo-sharing"],
+		"scheme": "budgetly",
+		"experiments": {
+			"typedRoutes": true
+		}
+	}
+}

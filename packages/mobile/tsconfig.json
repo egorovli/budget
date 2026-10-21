@@ -1,0 +1,16 @@
+{
+	"extends": ["expo/tsconfig.base", "../../tsconfig.json"],
+	"compilerOptions": {
+		"types": ["react", "bun"],
+		"paths": {
+			"~/*": ["./src/*"]
+		}
+	},
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"tests/**/*.ts",
+		".expo/types/**/*.ts",
+		"expo-env.d.ts"
+	]
+}

@@ -1,7 +1,7 @@
 # Build the first slice: the Free amount
 
 Type: task
-Status: open
+Status: claimed
 Parent: ../../../docs/product.md
 
 ## Goal
