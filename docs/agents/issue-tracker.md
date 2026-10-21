@@ -28,3 +28,11 @@ Used by `/wayfinder`. The **map** is a file with one **child** file per ticket.
 - **Frontier**: scan `.scratch/<effort>/issues/` for files that are open, unblocked, and unclaimed; first by number wins.
 - **Claim**: set `Status: claimed` and save before any work.
 - **Resolve**: append the answer under an `## Answer` heading, set `Status: resolved`, then append a context pointer (gist + link) to the map's Decisions-so-far in `map.md`.
+
+## Implementation completion
+
+For `/implement` and `/implement-spec`, claim a ticket with `Status: claimed`.
+After implementation and relevant checks, record the result and validation
+under `## Implementation`, then set `Status: done`. A blocking implementation
+ticket is complete when its status is `done` or `resolved`. Keep wayfinder's
+existing `resolved` / `## Answer` convention for decision tickets.

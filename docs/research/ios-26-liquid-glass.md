@@ -1,5 +1,7 @@
 # iOS 26 Liquid Glass in Expo and React Native
 
+> Note (2026-10-21): the Expo app at `packages/mobile` that this research inspected was deleted. File references below describe the old prototype.
+
 Research date: 2026-08-15
 
 ## Question
@@ -48,15 +50,15 @@ The inspected repository has:
 | App style | `userInterfaceStyle: "automatic"` | Light and dark system appearances are enabled. |
 
 These values come from
-[`packages/mobile/package.json`](../../packages/mobile/package.json),
-[`packages/mobile/app.json`](../../packages/mobile/app.json), and the installed
+`packages/mobile/package.json`,
+`packages/mobile/app.json`, and the installed
 toolchain. Expo's current SDK table confirms that SDK 57 uses React Native 0.86,
 supports iOS 16.4 and later, and requires Xcode 26.4 or later.
 [Expo SDK version table](https://docs.expo.dev/versions/latest/)
 
 Budgetly has no custom `GlassView`, `@expo/ui`, or `Stack.Toolbar` use yet. Its
 four Book tabs already use `expo-router/unstable-native-tabs`.
-[`BookTabsLayout`](../../packages/mobile/src/app/books/%5Bbook-id%5D/(tabs)/_layout.tsx)
+`BookTabsLayout`
 
 ## What the system gives Budgetly
 

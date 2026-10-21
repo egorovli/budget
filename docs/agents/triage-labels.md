@@ -13,3 +13,11 @@ The skills speak in terms of five canonical triage roles. This file maps those r
 When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
 
 Edit the right-hand column to match whatever vocabulary you actually use.
+
+## Categories
+
+Record one `Category:` value per triaged ticket: `bug` for broken behavior or
+`enhancement` for a feature or improvement. The five roles above are `Status:`
+values in this local tracker. Keep `Category:` separate from `Status:` and the
+wayfinder ticket's `Type:`. `claimed`, `resolved`, and `done` are lifecycle
+states, not triage roles.

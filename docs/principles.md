@@ -92,6 +92,6 @@ When choosing between approaches, ask in order:
 6. Does the core workflow meet a measured performance need?
 7. Which remaining approach is simpler to understand, test, operate, and evolve?
 
-Related project context lives in [`CONTEXT.md`](../CONTEXT.md), the product brief
+Related project context lives in [`GLOSSARY.md`](../GLOSSARY.md), the product brief
 and financial invariants live in [`docs/initial-handoff/README.md`](initial-handoff/README.md),
 and consequential architectural decisions live in [`docs/adr/`](adr/).

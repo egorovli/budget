@@ -22,3 +22,7 @@ packages/mobile/ios/
 # Generated build output
 dist/
 build/
+
+# Private bank statements and normalized seed data
+assets/seed/
+# Real statements now live in ../budgetly-seed (see docs/product.md)
