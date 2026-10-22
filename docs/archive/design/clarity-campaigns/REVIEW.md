@@ -20,7 +20,7 @@ These are image concepts, not working interactions. Navigation icons, phone notc
 
 The transaction ad represents a selected list item and its detail together. A native implementation should choose a clear drill-down or sheet rather than imply that repeated text is a second expense. Sync review needs an explicit source and category selection in a real workflow. Some short text may need more size/contrast at small ad placements; inspect the actual mobile uploader preview.
 
-The budgeting case is an alternate allocation state, not evidence that full allocation is the chosen production model. Expense-to-Reserve handling remains a domain decision. A balance from a bank provider is not automatically Budgetly Available money, particularly where overdraft or credit is included.
+The budgeting case is an alternate allocation state, not evidence that full allocation is the chosen production model. Expense-to-Reserve handling remains a domain decision. A balance from a bank provider is not automatically Sort of Budget Available money, particularly where overdraft or credit is included.
 
 The first bank-sync draft had a taller aspect ratio. A built-in image edit produced the final 1122 × 1402 image. The draft is preserved but is absent from the gallery and final manifest. No final image was stretched or cropped to hide content.
 

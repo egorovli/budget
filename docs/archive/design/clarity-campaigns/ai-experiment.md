@@ -4,7 +4,7 @@
 
 ## Product promise
 
-Keep financial records in Budgetly. Use its ordinary screens without an agent. When useful, let your chosen agent read a selected Book, ask questions there, and check the records and assumptions behind an answer. Export records and revoke future agent access from Budgetly.
+Keep financial records in Sort of Budget. Use its ordinary screens without an agent. When useful, let your chosen agent read a selected Book, ask questions there, and check the records and assumptions behind an answer. Export records and revoke future agent access from Sort of Budget.
 
 This is the product direction to test. It does not establish legal ownership terms or promise that data never leaves the device. An external agent receives selected data, and its provider's handling still matters. Revocation cannot erase records already received by another service. Offline recordkeeping remains part of the product direction; a remote agent is not an offline guarantee.
 
@@ -32,7 +32,7 @@ A weak own-ai campaign could reflect low current agent use, unclear setup, unwil
 
 ## A separate test for AI's added value
 
-After one task earns a working trial, register a new test with two otherwise matched presentations: the task in Budgetly alone, and the same task with an optional external-agent step. Hold layout, offer, disclosure, acquisition source, performance, and form fixed as far as possible. Use a neutral acquisition message and random assignment before the page renders if the question is the page effect. Keep all assigned eligible arrivals in the denominator. This estimates presentation effect in that acquired population, not retention value or universal market demand.
+After one task earns a working trial, register a new test with two otherwise matched presentations: the task in Sort of Budget alone, and the same task with an optional external-agent step. Hold layout, offer, disclosure, acquisition source, performance, and form fixed as far as possible. Use a neutral acquisition message and random assignment before the page renders if the question is the page effect. Keep all assigned eligible arrivals in the denominator. This estimates presentation effect in that acquired population, not retention value or universal market demand.
 
 For actual AI value, a later working-product trial must observe useful repeat questions, correctness against source records, trust, revocation, time/effort, and willingness to pay. Choose the effect worth detecting, baseline, sample size, error control, and stopping rule before that test. The existing $600 pilot is exploratory; do not buy an extra AI/no-AI matrix from the same small budget.
 

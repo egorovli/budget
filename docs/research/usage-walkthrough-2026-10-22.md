@@ -26,9 +26,9 @@ the app as a user would, on the iOS simulator, with a realistic but synthetic Bo
 
 Tools added for this walkthrough (also useful later):
 
-- `budgetly://?command=…` puts a command in the command bar. An iOS Shortcut or the Action
+- `budget://?command=…` puts a command in the command bar. An iOS Shortcut or the Action
   button can use it.
-- `budgetly://ai?text=a | b | c` runs several commands through every engine on the AI page
+- `budget://ai?text=a | b | c` runs several commands through every engine on the AI page
   and writes a `[compare]` block per command to the Metro log.
 
 ## Command results
@@ -123,7 +123,7 @@ Two causes repeat:
     renews itself after its payment would remove most manual work.
 17. **"Where did the money go?"** The slice has no categories or totals. Decide whether
     merchant totals per month belong in the slice or wait for statement import.
-18. **Quick entry outside the app.** `budgetly://?command=` already works. An iOS Shortcut (and
+18. **Quick entry outside the app.** `budget://?command=` already works. An iOS Shortcut (and
     later an App Intent) on the Action button or the Lock Screen can make capture take a few
     seconds.
 

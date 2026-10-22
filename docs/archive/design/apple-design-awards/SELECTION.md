@@ -1,4 +1,4 @@
-# Selected references for Budgetly
+# Selected references for Sort of Budget
 
 The user selected these apps in the conversation on 12 September 2026:
 

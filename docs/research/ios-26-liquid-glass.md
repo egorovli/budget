@@ -6,12 +6,12 @@ Research date: 2026-08-15
 
 ## Question
 
-How should Budgetly adopt native iOS 26 Liquid Glass while it keeps correct
+How should Sort of Budget adopt native iOS 26 Liquid Glass while it keeps correct
 behavior on iOS 16.4 through 25, Android, and web?
 
 ## Recommendation
 
-Use system components first. Budgetly already uses the native Expo Router
+Use system components first. Sort of Budget already uses the native Expo Router
 `Stack` and `NativeTabs`. When the app is built with Xcode 26 and runs on iOS
 26, these components get the system Liquid Glass design. Do not recreate their
 glass backgrounds.
@@ -33,7 +33,7 @@ that this design must support.
 
 No package install is necessary.
 
-## Current Budgetly state
+## Current Sort of Budget state
 
 The inspected repository has:
 
@@ -56,11 +56,11 @@ toolchain. Expo's current SDK table confirms that SDK 57 uses React Native 0.86,
 supports iOS 16.4 and later, and requires Xcode 26.4 or later.
 [Expo SDK version table](https://docs.expo.dev/versions/latest/)
 
-Budgetly has no custom `GlassView`, `@expo/ui`, or `Stack.Toolbar` use yet. Its
+Sort of Budget has no custom `GlassView`, `@expo/ui`, or `Stack.Toolbar` use yet. Its
 four Book tabs already use `expo-router/unstable-native-tabs`.
 `BookTabsLayout`
 
-## What the system gives Budgetly
+## What the system gives Sort of Budget
 
 Apple says that standard SwiftUI and UIKit components get the new design when
 an app uses the current SDK. This includes navigation bars, tab bars, toolbars,
@@ -70,7 +70,7 @@ to put Liquid Glass in the content layer and to use custom glass sparingly.
 [Apple: Adopting Liquid Glass](https://developer.apple.com/documentation/TechnologyOverviews/adopting-liquid-glass)
 [Apple Human Interface Guidelines: Materials](https://developer.apple.com/design/human-interface-guidelines/materials)
 
-This rule is a good match for Budgetly:
+This rule is a good match for Sort of Budget:
 
 - tabs, navigation bars, toolbars, and important controls can use glass;
 - Book balances, reports, transactions, Reserves, Accounts, forms, and list
@@ -114,7 +114,7 @@ platform-specific tabs component with headless `expo-router/ui` tabs when the
 web layout needs production styling.
 [Expo Router: Native-tabs web and inset behavior](https://docs.expo.dev/router/advanced/native-tabs/#custom-web-layout)
 
-Budgetly must also add a root Expo Router `ThemeProvider` before it relies on
+Sort of Budget must also add a root Expo Router `ThemeProvider` before it relies on
 glass headers or toolbars. Expo documents white flashes and dark-mode glass
 flicker when the navigation theme does not match the system color scheme.
 [Expo Router: native-tabs common problems](https://docs.expo.dev/router/advanced/native-tabs/#common-problems)
@@ -280,7 +280,7 @@ The SDK 57 documentation marks both `expo-glass-effect` and `@expo/ui` as
 included in Expo Go. Expo Go is sufficient for a quick component experiment
 when its binary supports the same SDK and was built with Xcode 26.
 
-Use Budgetly's local development build for the proof and all acceptance tests:
+Use Sort of Budget's local development build for the proof and all acceptance tests:
 
 ```sh
 cd packages/mobile
@@ -289,13 +289,13 @@ bun run ios
 
 Then use `bun run start` for TypeScript-only iterations. A rebuild is needed
 after a native dependency, app configuration, or Expo SDK change. It is not
-needed for ordinary component code. Budgetly already has `expo-dev-client` and
+needed for ordinary component code. Sort of Budget already has `expo-dev-client` and
 the correct scripts. Expo recommends a development build for a production app
 because it includes the project's exact native code and configuration.
 [Expo: Introduction to development builds](https://docs.expo.dev/develop/development-builds/introduction/)
 [Expo: Use a development build](https://docs.expo.dev/develop/development-builds/use-development-builds/)
 
-Expo Go cannot validate Budgetly's final binary, deployment target, app
+Expo Go cannot validate Sort of Budget's final binary, deployment target, app
 configuration, or exact native navigation integration. Also, the App Store
 Expo Go binary can support a different SDK from the project. Therefore it is
 not a release gate.
@@ -356,11 +356,11 @@ container until the design has two or more nearby glass controls.
 3. **Medium risk — one SwiftUI glass button.** The fallback is safe, but the
    SwiftUI subtree adds a second layout system and needs a platform adapter.
 4. **Medium to high risk — `expo-glass-effect`.** It gives precise RN layout
-   control, but Budgetly owns the fallback, contrast, interaction, grouping,
+   control, but Sort of Budget owns the fallback, contrast, interaction, grouping,
    and animation behavior.
 5. **High risk — broad custom glass design or an iOS-26 deployment target.** It
    conflicts with Apple's content-layer guidance, expands the test surface,
-   and can remove support for valid Budgetly devices. Do not adopt it.
+   and can remove support for valid Sort of Budget devices. Do not adopt it.
 
 The practical release gate is an iOS 26 local build plus an earlier-iOS build,
 Android, and web. A screenshot from one iOS 26 simulator is not enough.
@@ -374,6 +374,6 @@ a bottom toolbar. It uses `expo-glass-effect` only in diagnostics and has a
 mock and availability probe.
 
 CBT Quest also sets `deploymentTarget: '26.0'`. Do not copy that setting into
-Budgetly. Budgetly needs iOS 16.4 and later support, and both Expo glass
+Sort of Budget. Sort of Budget needs iOS 16.4 and later support, and both Expo glass
 packages use availability guards. The comparison is evidence for keeping the
 glass seam small, not evidence for raising the operating-system minimum.

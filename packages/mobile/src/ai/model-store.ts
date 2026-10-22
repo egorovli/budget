@@ -1,5 +1,5 @@
 import { Directory, File, Paths } from 'expo-file-system'
-import { BudgetlyAI } from '../../modules/budgetly-ai/index.ts'
+import { BudgetAI } from '../../modules/budget-ai/index.ts'
 import type { ModelEntry } from './catalog.ts'
 import { filesFor } from './catalog.ts'
 
@@ -32,7 +32,7 @@ export async function download(
 ): Promise<void> {
 	const target = directory(model)
 	target.create({ intermediates: true, idempotent: true })
-	await BudgetlyAI.excludeFromBackup(target.uri)
+	await BudgetAI.excludeFromBackup(target.uri)
 	const files = filesFor(model, false)
 	const total = files.reduce((sum, file) => sum + file.size, 0)
 	let done = 0
@@ -69,7 +69,7 @@ export async function download(
 }
 
 export async function remove(model: ModelEntry): Promise<void> {
-	await BudgetlyAI.needleUnload()
+	await BudgetAI.needleUnload()
 	const target = new Directory(Paths.document, 'models', model.id)
 	if (target.exists) {
 		target.delete()

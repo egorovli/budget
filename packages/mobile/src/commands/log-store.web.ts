@@ -3,7 +3,7 @@ import { appended } from './log.ts'
 
 // Browser development storage for the command log.
 
-const key = 'budgetly.command-log'
+const key = 'budget.command-log'
 
 export function loadLog(): Promise<LogEntry[]> {
 	try {

@@ -1,6 +1,6 @@
 > **Current direction:** Clarity only. See the [active campaign set](clarity-campaigns/README.md) for bank sync, envelopes, Transactions and purchase checks.
 
-# Budgetly — four visual directions
+# Sort of Budget — four visual directions
 
 **[Open the comparison gallery](index.html)** or use the running [local preview](http://127.0.0.1:8770/). Switch between App screens and Ad concepts; choose one direction to inspect it at a larger size.
 
@@ -19,7 +19,7 @@ Each direction produces a three-screen app board and one portrait ad. All use th
 
 [Campaign ideas](CAMPAIGN-IDEAS.md) maps eight promises and 24 scene/style combinations, with three suggested follow-on creatives.
 
-These are original generated concept images, not screenshots of a working app. They are for design review and preparation of demand tests. Each direction includes its design system, exact prompts, source inspiration, and production notes. The product name remains Budgetly; direction names are internal labels.
+These are original generated concept images, not screenshots of a working app. They are for design review and preparation of demand tests. Each direction includes its design system, exact prompts, source inspiration, and production notes. The product name remains Sort of Budget; direction names are internal labels.
 
 
 ## Delivered

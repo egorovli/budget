@@ -1,4 +1,4 @@
-# Budgetly — product concept 0.1
+# Sort of Budget — product concept 0.1
 
 Status: proposal for discussion, not a validated specification.
 
@@ -8,7 +8,7 @@ Decision context: [Define the product promise and core experience](issues/03-def
 
 **Your money, up to date. Your plans, in one place. See what you can spend.**
 
-Budgetly helps an individual or household keep a reliable financial picture, plan how to use their money, and make everyday spending decisions. Automatic collection, fast manual entry, and access for an existing agent support the same workflow.
+Sort of Budget helps an individual or household keep a reliable financial picture, plan how to use their money, and make everyday spending decisions. Automatic collection, fast manual entry, and access for an existing agent support the same workflow.
 
 ## First user hypothesis
 

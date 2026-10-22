@@ -6,7 +6,7 @@ Prepared 2026-09-12. This is the active next batch. It replaces the earlier thre
 
 ## The decision
 
-Find a concrete problem that makes an individual or household want to switch from their current method and consider paying for Budgetly. Use the result to choose one small working trial. Attractive screens are an input to that test, not evidence of demand.
+Find a concrete problem that makes an individual or household want to switch from their current method and consider paying for Sort of Budget. Use the result to choose one small working trial. Attractive screens are an input to that test, not evidence of demand.
 
 The product remains an offline-capable, accurate finance tool with bank updates, planning, and optional external-agent access. This campaign batch puts a useful job in front of the feature list. Shared use, offline use, and agent access remain candidates for later tests; they do not become three more competing claims on each ad.
 
@@ -23,7 +23,7 @@ Copy revised 12 September 2026 after the app-reference study. [COPY.md](COPY.md)
 
 **Priority judgment:** sync and envelopes are the strongest first pair because they address upkeep and an active planning routine. Transaction clarity may be supporting proof rather than the reason to pay; include it to test that doubt. Purchase check is a more specific decision tool; test whether it fits actual behavior. These are hypotheses, not findings from competitor feature pages.
 
-The source review is in [Research findings](research/findings.md). Existing products demonstrate that these features are established categories. Their presence does not establish an unmet need for Budgetly. Follow-up must identify a switching reason: too much upkeep, confusing allocations, poor retrieval, or a decision the current tool cannot answer simply.
+The source review is in [Research findings](research/findings.md). Existing products demonstrate that these features are established categories. Their presence does not establish an unmet need for Sort of Budget. Follow-up must identify a switching reason: too much upkeep, confusing allocations, poor retrieval, or a decision the current tool cannot answer simply.
 
 ## Keep the two plans distinct
 

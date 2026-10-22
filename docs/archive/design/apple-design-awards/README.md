@@ -1,4 +1,4 @@
-# Budgetly design reference library
+# Sort of Budget design reference library
 
 **Open [the visual gallery](index.html).** It contains **49 apps and 346 source images**: all 41 apps that Apple classified as non-game Design Award winners in 2020–2026, plus eight selected finalists. This is a complete winner set for that period, not a claim to cover the award's full history.
 
@@ -7,7 +7,7 @@ Use **Explore screens** to see all images for an app. Pick a whole app or indivi
 The gallery opens as a local HTML file and needs no internet or build step. If your browser restricts local files, serve this directory with:
 
 ```sh
-python3 -m http.server 8769 --bind 127.0.0.1 --directory /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards
+python3 -m http.server 8769 --bind 127.0.0.1 --directory /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards
 ```
 
 Then open <http://127.0.0.1:8769/>. All gallery images, styles, scripts, and data are local. Source links lead to external sites only when opened. Downloaded JSON records the picks; it is not an import file for the current gallery.
@@ -36,7 +36,7 @@ These groups are our interpretation. The gallery retains each app's verified awa
 - Build interaction, accessibility, and difficult states into the experience.
 - Make campaign assets from that product experience.
 
-Each [app note](apps/) describes what the inspected images show, a possible use in Budgetly, and a tradeoff. Those observations are separate from Apple's award rationale. None of these references prove demand or that a style will sell.
+Each [app note](apps/) describes what the inspected images show, a possible use in Sort of Budget, and a tradeoff. Those observations are separate from Apple's award rationale. None of these references prove demand or that a style will sell.
 
 ## Image evidence and limits
 
@@ -49,7 +49,7 @@ Collected on **12 September 2026** from Apple's public award pages, Newsroom, Ap
 - Taobao's spatial images come from its Chinese App Store page and contain Chinese text.
 - Screenshots cannot verify gesture quality, haptics, speed, offline behavior, accessibility, or retention. The written research links to Apple interviews for design intent. Hands-on review of the chosen references can follow.
 
-Original image bytes are retained in `images/`. `thumbnails/` contains proportional previews; original framing and content are not altered. Every source image has its source URL, dimensions, byte count, and SHA-256 checksum in [apps.json](data/apps.json) and [sources.csv](data/sources.csv). The underlying app artwork belongs to its respective creators. Use it for this reference study; create original Budgetly assets for campaigns.
+Original image bytes are retained in `images/`. `thumbnails/` contains proportional previews; original framing and content are not altered. Every source image has its source URL, dimensions, byte count, and SHA-256 checksum in [apps.json](data/apps.json) and [sources.csv](data/sources.csv). The underlying app artwork belongs to its respective creators. Use it for this reference study; create original Sort of Budget assets for campaigns.
 
 ## Files
 
@@ -72,9 +72,9 @@ The user changed the sequence on 12 September 2026: **study references → user 
 
 The earlier demand kit's palette, layouts, and placeholder campaign images are proposals. They are not an approved product identity. Do not treat them as the design target. The demand hypotheses remain useful, but the selected visual direction must drive the next asset work.
 
-After the user makes picks, propose three coherent Budgetly directions using the same financial scenario. Each should show a Book overview, Activity, fast transaction entry, and a Reserve or purchase decision. Then develop one chosen direction into a short interactive sequence with realistic content and difficult states. Preserve the distinction between Account balance, Available money, Reserve, Free amount, and Net worth. Only then derive campaign variations.
+After the user makes picks, propose three coherent Sort of Budget directions using the same financial scenario. Each should show a Book overview, Activity, fast transaction entry, and a Reserve or purchase decision. Then develop one chosen direction into a short interactive sequence with realistic content and difficult states. Preserve the distinction between Account balance, Available money, Reserve, Free amount, and Net worth. Only then derive campaign variations.
 
-This research task did not modify the parallel `.worktrees/demand-assets/` checkout or implement Budgetly app screens.
+This research task did not modify the parallel `.worktrees/demand-assets/` checkout or implement Sort of Budget app screens.
 
 ## Rebuild or refresh
 

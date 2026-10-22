@@ -1,4 +1,4 @@
-import { BudgetlyAI } from '../../modules/budgetly-ai/index.ts'
+import { BudgetAI } from '../../modules/budget-ai/index.ts'
 // biome-ignore lint/correctness/useImportExtensions: platform seam, Metro selects needle.web.ts on web
 import { runNeedle } from '../ai/needle'
 import type { CommandDraft, InterpreterContext, ToolCall } from './draft.ts'
@@ -12,7 +12,7 @@ import { systemPrompt, toolDefinitions } from './tools.ts'
 // could not read; see merge.ts.
 
 /** Null on web: the browser has no on-device Apple model or speech. */
-export const native = BudgetlyAI as typeof BudgetlyAI | null
+export const native = BudgetAI as typeof BudgetAI | null
 
 export type { ModelName } from './merge.ts'
 

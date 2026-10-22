@@ -1,18 +1,18 @@
 {
 	"expo": {
-		"name": "Budgetly",
-		"slug": "budgetly",
+		"name": "Sort of Budget",
+		"slug": "budget",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/icon.png",
 		"userInterfaceStyle": "light",
 		"ios": {
 			"supportsTablet": false,
-			"bundleIdentifier": "io.egorov.budgetly",
+			"bundleIdentifier": "io.egorov.budget",
 			"appleTeamId": "MG48329H8U",
 			"infoPlist": {
-				"NSMicrophoneUsageDescription": "Budgetly listens when you tap the microphone, to turn what you say into an expense or a transfer. Audio stays on this iPhone.",
-				"NSSpeechRecognitionUsageDescription": "Budgetly turns what you say into text on this iPhone. Your speech is not sent to a server."
+				"NSMicrophoneUsageDescription": "Sort of Budget listens when you tap the microphone, to turn what you say into an expense or a transfer. Audio stays on this iPhone.",
+				"NSSpeechRecognitionUsageDescription": "Sort of Budget turns what you say into text on this iPhone. Your speech is not sent to a server."
 			}
 		},
 		"android": {
@@ -23,7 +23,7 @@
 				"monochromeImage": "./assets/android-icon-monochrome.png"
 			},
 			"predictiveBackGestureEnabled": false,
-			"package": "io.egorov.budgetly"
+			"package": "io.egorov.budget"
 		},
 		"web": {
 			"bundler": "metro",
@@ -31,7 +31,7 @@
 			"favicon": "./assets/favicon.png"
 		},
 		"plugins": ["expo-router", "expo-sqlite", "expo-sharing"],
-		"scheme": "budgetly",
+		"scheme": "budget",
 		"experiments": {
 			"typedRoutes": true
 		}

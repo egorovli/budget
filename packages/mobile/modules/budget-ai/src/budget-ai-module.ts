@@ -1,7 +1,7 @@
 import { NativeModule, requireNativeModule } from 'expo'
-import type { AppleModelStatus, BudgetlyAIEvents, SpeechStatus } from './budgetly-ai.types.ts'
+import type { AppleModelStatus, BudgetAIEvents, SpeechStatus } from './budget-ai.types.ts'
 
-declare class BudgetlyAINativeModule extends NativeModule<BudgetlyAIEvents> {
+declare class BudgetAINativeModule extends NativeModule<BudgetAIEvents> {
 	/** Status of on-device speech recognition for each locale. Never uses a server. */
 	getSpeechStatus(locales: string[]): Promise<SpeechStatus[]>
 	/** Downloads the system speech asset for a locale. Progress comes as `onSpeechDownload`. */
@@ -26,4 +26,4 @@ declare class BudgetlyAINativeModule extends NativeModule<BudgetlyAIEvents> {
 	excludeFromBackup(path: string): Promise<void>
 }
 
-export const BudgetlyAI = requireNativeModule<BudgetlyAINativeModule>('BudgetlyAI')
+export const BudgetAI = requireNativeModule<BudgetAINativeModule>('BudgetAI')

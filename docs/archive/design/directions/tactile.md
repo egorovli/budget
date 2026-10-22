@@ -1,6 +1,6 @@
 # Tactile — money with a sense of touch
 
-Original Budgetly design concept for individuals and households. The app makes the Free amount the first decision number and gives each Reserve a compact physical form. Two final generated assets are included: [three-screen board](app-board.png) and [portrait campaign](ad-portrait.png). All financial records are synthetic.
+Original Sort of Budget design concept for individuals and households. The app makes the Free amount the first decision number and gives each Reserve a compact physical form. Two final generated assets are included: [three-screen board](app-board.png) and [portrait campaign](ad-portrait.png). All financial records are synthetic.
 
 ## Design system
 

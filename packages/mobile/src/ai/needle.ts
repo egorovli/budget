@@ -1,4 +1,4 @@
-import { BudgetlyAI } from '../../modules/budgetly-ai/index.ts'
+import { BudgetAI } from '../../modules/budget-ai/index.ts'
 import { needle } from './catalog.ts'
 // biome-ignore lint/correctness/useImportExtensions: platform seam, Metro selects model-store.web.ts on web
 import { filePath, isDownloaded } from './model-store'
@@ -10,12 +10,12 @@ export async function runNeedle(system: string, toolsJson: string, text: string)
 	if (!(await isDownloaded(needle))) {
 		return null
 	}
-	loaded ??= BudgetlyAI.needleLoad(filePath(needle, 'needle3.cact')).catch((error: unknown) => {
+	loaded ??= BudgetAI.needleLoad(filePath(needle, 'needle3.cact')).catch((error: unknown) => {
 		loaded = null
 		throw error
 	})
 	await loaded
-	return BudgetlyAI.needleComplete(system, toolsJson, text)
+	return BudgetAI.needleComplete(system, toolsJson, text)
 }
 
 export function forgetNeedle(): void {

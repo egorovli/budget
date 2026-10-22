@@ -8,7 +8,7 @@ Use `/demo/<promise>` for a synthetic-session offer and `/pilot/<promise>` for t
 
 ### Above the fold — exact default copy
 
-- Eyebrow: **Budgetly · In development**
+- Eyebrow: **Sort of Budget · In development**
 - Headline: use headline A from the selected brief.
 - Description: use that brief's body.
 - Image label: **Concept screens · sample data**
@@ -32,8 +32,8 @@ No fabricated reviews, star ratings, app-store badges, customer counts, security
 
 ### Default FAQ copy
 
-**Can I use Budgetly now?**
-Budgetly is in development. This page shows a proposed experience using sample data. Joining the list does not create a paid subscription.
+**Can I use Sort of Budget now?**
+Sort of Budget is in development. This page shows a proposed experience using sample data. Joining the list does not create a paid subscription.
 
 **Will it connect to my bank?**
 Bank connections are part of the plan. Institutions and countries supported at launch are not yet confirmed. You can optionally tell us which institutions matter to you after joining.
@@ -60,13 +60,13 @@ Then one optional question: **What would you want it to solve first?** Provide t
 
 Optional later question: institution names and country. Never request Account numbers, passwords, authentication codes, balances, statements, or bank authorization in this demand funnel.
 
-Suggested submission success copy: **You're on the early-access list. Budgetly is still in development. Check your email to confirm your address.** Use this only after a real accepted submission and configured confirmation delivery. Until then label the whole form demo-only.
+Suggested submission success copy: **You're on the early-access list. Sort of Budget is still in development. Check your email to confirm your address.** Use this only after a real accepted submission and configured confirmation delivery. Until then label the whole form demo-only.
 
 Suggested confirmation email draft (sending requires authorization and a configured real process):
 
-> Subject: Confirm your Budgetly early-access request
+> Subject: Confirm your Sort of Budget early-access request
 >
-> You asked for updates about Budgetly, a personal and household finance app in development. Confirm your email using the link below. The screens you saw were a concept, and no payment or subscription has been created. If you did not request this, you can ignore this email.
+> You asked for updates about Sort of Budget, a personal and household finance app in development. Confirm your email using the link below. The screens you saw were a concept, and no payment or subscription has been created. If you did not request this, you can ignore this email.
 
 ## Four offer types
 
@@ -83,7 +83,7 @@ Do not merge these offers into one conversion metric. In particular, a demo invi
 
 Default first comparison uses **$9/month** throughout. If the resulting audience and problem merit further work, compare **$6, $9 and $12 per month** with the same defined offer, audience and action. Treat these as planning values; do not add annual prices or feature tiers in the same test.
 
-Competitor prices are context, not evidence of Budgetly demand. See the [first-party pricing note](../research/pricing-reference.md). The proposed amount also needs to cover bank-provider, infrastructure, support and any AI costs, which are not yet known.
+Competitor prices are context, not evidence of Sort of Budget demand. See the [first-party pricing note](../research/pricing-reference.md). The proposed amount also needs to cover bank-provider, infrastructure, support and any AI costs, which are not yet known.
 
 Keep one offer version per participant during the experiment; do not show someone a new price on every visit. Make it a proposed prelaunch price without making a binding price-lock promise. Record exposed price and offer version. Seek stronger evidence through a genuinely deliverable paid offer; do not invent a fake successful checkout, a declined card flow, or a claimed purchase event.
 
@@ -91,7 +91,7 @@ Keep one offer version per participant during the experiment; do not show someon
 
 **Proposed offer:** $20 USD once for a 14-day assisted trial: one setup/review session of up to 30 minutes and one follow-up of up to 20 minutes, using a simple personal or household spending plan. The deliverable is a reviewed plan and a readable explanation of its source records. No app subscription, automatic renewal, bank connection or investment/tax advice is included.
 
-This is a service test that a founder/operator must actually be able to deliver. It cannot be represented as access to a completed Budgetly app. It is not on the initial cold-ad menu.
+This is a service test that a founder/operator must actually be able to deliver. It cannot be represented as access to a completed Sort of Budget app. It is not on the initial cold-ad menu.
 
 Before offering it, the operator must confirm the deliverer, session availability, precise scope, full payable price/tax treatment, payment provider, applicable terms, and cancellation/refund handling. Proposed minimum policy: full refund before the first session or if the promised service cannot be delivered; actual terms must preserve any applicable consumer rights. Do not collect money until those facts and the user authorization are in place.
 

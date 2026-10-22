@@ -1,4 +1,4 @@
-# Budgetly: design
+# Sort of Budget: design
 
 Status: 2026-10-21. The direction is **Clarity**, selected on 2026-09-12 from four candidates. The full direction and campaign notes are in [`archive/design/`](archive/design/). The images and campaign exports were deleted.
 

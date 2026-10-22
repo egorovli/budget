@@ -33,7 +33,7 @@ function Content() {
 		>
 			<Stack.Screen
 				name='index'
-				options={{ title: 'Budgetly', headerLargeTitle: true }}
+				options={{ title: 'Sort of Budget', headerLargeTitle: true }}
 			/>
 			<Stack.Screen
 				name='expense'

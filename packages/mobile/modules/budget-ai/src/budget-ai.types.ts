@@ -29,7 +29,7 @@ export interface AppleModelStatus {
 }
 
 // biome-ignore lint/style/useConsistentTypeDefinitions: Expo EventsMap needs a type alias
-export type BudgetlyAIEvents = {
+export type BudgetAIEvents = {
 	onTranscript: (event: TranscriptEvent) => void
 	onSpeechDownload: (event: SpeechDownloadEvent) => void
 	onAudioLevel: (event: { level: number }) => void

@@ -44,7 +44,7 @@ export default function SettingsScreen() {
 					detail='Keep the file outside this device, for example in iCloud Drive.'
 					onPress={() =>
 						run(() =>
-							exportJSON(`budgetly-${new Date().toISOString().slice(0, 10)}.json`, book).then(
+							exportJSON(`sort-of-budget-${new Date().toISOString().slice(0, 10)}.json`, book).then(
 								() => null
 							)
 						)

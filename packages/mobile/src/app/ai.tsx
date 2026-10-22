@@ -1,7 +1,7 @@
 import { useLocalSearchParams } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native'
-import type { AppleModelStatus, SpeechStatus } from '../../modules/budgetly-ai/index.ts'
+import type { AppleModelStatus, SpeechStatus } from '../../modules/budget-ai/index.ts'
 import { downloadSize, formatBytes, needle } from '~/ai/catalog.ts'
 // biome-ignore lint/correctness/useImportExtensions: platform seam, Metro selects model-store.web.ts on web
 import { download, isDownloaded, remove } from '~/ai/model-store'
@@ -236,7 +236,7 @@ async function compare(sentence: string, book: Book): Promise<string> {
 
 /**
  * One line is one command. Several lines run through every engine and show the results side by
- * side. `budgetly://ai?text=…` fills the field and runs it.
+ * side. `budget://ai?text=…` fills the field and runs it.
  */
 function TrySection() {
 	const { book } = useBook()

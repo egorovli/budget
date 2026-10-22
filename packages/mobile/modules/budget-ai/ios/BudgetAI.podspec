@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
-  s.name           = 'BudgetlyAI'
+  s.name           = 'BudgetAI'
   s.version        = '1.0.0'
-  s.summary        = 'On-device speech, Apple Foundation Models, and Needle for Budgetly'
+  s.summary        = 'On-device speech, Apple Foundation Models, and Needle for Sort of Budget'
   s.description    = 'Local Expo module: on-device speech recognition, Apple Foundation Models guided generation, and the Needle tool-call model. Nothing leaves the device.'
-  s.author         = 'Budgetly'
-  s.homepage       = 'https://github.com/egorovli/budgetly'
+  s.author         = 'Sort of Budget'
+  s.homepage       = 'https://github.com/egorovli/budget'
   # ExpoModulesCore 58 requires iOS 16.4. iOS 26 APIs are guarded with #available.
   s.platforms      = { :ios => '16.4' }
   s.swift_version  = '6.0'

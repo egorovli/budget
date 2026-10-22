@@ -8,7 +8,7 @@ A clear view of money, with the atmosphere of a precision celestial app. Light b
 - [Lumy](../../../design-references/apple-design-awards/images/lumy/02.jpg): one dominant answer, a restrained horizon, and depth from light rather than extra cards.
 - [Sunlitt](../../../design-references/apple-design-awards/images/sunlitt/04.jpg): dark grouped information, aligned values, and quiet symbolic icons.
 
-The images are original Budgetly concepts. They do not copy those apps' artwork or claim an Apple award.
+The images are original Sort of Budget concepts. They do not copy those apps' artwork or claim an Apple award.
 
 ## Design system
 

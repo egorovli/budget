@@ -4,7 +4,7 @@ Date: 2026-08-13
 
 ## Decision
 
-Use direct Skia plus selected D3 modules behind one Budgetly-owned chart
+Use direct Skia plus selected D3 modules behind one Sort of Budget–owned chart
 module. The direct mobile dependencies are:
 
 ```json
@@ -30,10 +30,10 @@ All required peer dependencies are already direct mobile dependencies:
 Victory Native declares Skia `>=1.2.3 <3.0.0`, Gesture Handler `>=2.0.0`,
 Reanimated `>=3.0.0`, and unrestricted React and React Native peer ranges. It
 also includes `d3-scale`, `d3-shape`, and `d3-zoom` as its own dependencies.
-The current Budgetly versions satisfy these ranges. [Victory Native package
+The current Sort of Budget versions satisfy these ranges. [Victory Native package
 metadata](https://github.com/FormidableLabs/victory-native-xl/blob/main/lib/package.json)
 
-Expo SDK 57 currently recommends Skia `2.6.2`, while Budgetly has `2.10.1`.
+Expo SDK 57 currently recommends Skia `2.6.2`, while Sort of Budget has `2.10.1`.
 The newer Skia version satisfies Victory Native and upstream Skia peer ranges,
 and the existing local iOS build passed. Keep it only with the existing Expo
 install exclusion and full local build checks. [Expo SDK 57 Skia
@@ -43,10 +43,10 @@ reference](https://docs.expo.dev/versions/v57.0.0/sdk/skia/)
 
 This section records the first assessment. The direct-stack reconsideration
 later in this note supersedes the installation decision because Victory's
-interface would constrain Budgetly's chart data, geometry, axis, and
+interface would constrain Sort of Budget's chart data, geometry, axis, and
 interaction model.
 
-Budgetly needs more than one fast line graph. It needs time-series lines and
+Sort of Budget needs more than one fast line graph. It needs time-series lines and
 areas, category bars, possible category shares, multiple series, axes, and
 touch inspection. Victory Native gives these through one Skia-based system:
 
@@ -69,17 +69,17 @@ touch inspection. Victory Native gives these through one Skia-based system:
   [Victory Native repository](https://github.com/FormidableLabs/victory-native-xl)
 
 Victory Native is not a fixed visual theme. Its render-function API returns
-chart geometry and accepts Skia drawing nodes. Budgetly can use a small shared
+chart geometry and accepts Skia drawing nodes. Sort of Budget can use a small shared
 chart design layer without replacing the chart engine.
 
 ## Comparison
 
-| Option | Strong points | Limits for Budgetly | Install now |
+| Option | Strong points | Limits for Sort of Budget | Install now |
 | --- | --- | --- | --- |
 | `victory-native@41.26.0` | Skia rendering; line, area, bar, stack, scatter, pie, and candlestick; typed multi-series data; axes; custom press state; pan and zoom; active releases | Its data-key, render-function, axis, gesture, and geometry model becomes part of report implementation; no complete chart-specific screen-reader model | No |
 | `react-native-graph@1.3.0` | Excellent animated time-series line graph; smooth scrub selection; optimized non-animated mode for lists; active 2026 reboot | It is a line-graph component, not a general report chart system; no bars or category chart system; no official web or chart accessibility contract in its README | No |
 | `react-native-gifted-charts@1.4.78` | Broad set of ready-made charts; many props; SVG; press, pointer, scroll, and animation features; frequent releases | Adds `react-native-svg` plus `expo-linear-gradient`; separate package for web; current source development baseline still lists React 18 and React Native 0.74; very wide prop API; no documented chart-specific accessibility contract | No |
-| Direct Skia plus selected D3 modules | Full control; small external seam; Skia works on native and web; D3 has strong scale and shape utilities | Budgetly must implement and verify axes, layout, labels, missing data, interaction, animation, and accessibility in one owned module | Yes |
+| Direct Skia plus selected D3 modules | Full control; small external seam; Skia works on native and web; D3 has strong scale and shape utilities | Sort of Budget must implement and verify axes, layout, labels, missing data, interaction, animation, and accessibility in one owned module | Yes |
 
 ### `react-native-graph`
 
@@ -91,14 +91,14 @@ non-animated mode for lists. [react-native-graph
 README](https://github.com/margelo/react-native-graph)
 
 The current release is `1.3.0`, published on 2026-07-23. The 2026 reboot
-requires Skia newer than `1.12.4`, which Budgetly satisfies. The current
+requires Skia newer than `1.12.4`, which Sort of Budget satisfies. The current
 repository develops against React 19, React Native 0.83, Reanimated 4, and
 Worklets. [react-native-graph
 releases](https://github.com/margelo/react-native-graph/releases)
 [Current package metadata](https://github.com/margelo/react-native-graph/blob/main/package.json)
 
 It does not replace a full report chart system. Installing it together with
-Victory Native would give Budgetly two APIs for the same line-chart role. Add
+Victory Native would give Sort of Budget two APIs for the same line-chart role. Add
 it later only if measurements show that one important miniature time-series
 view cannot meet its performance target with Victory Native.
 
@@ -121,7 +121,7 @@ The project is active. GitHub release `1.4.78` was published on 2026-08-10.
 However, the source package metadata still uses React 18.2 and React Native
 0.74 for development. Its peer ranges are unrestricted, but the repository
 does not state a New Architecture support contract. This is a lower-confidence
-fit than the Skia stack that Budgetly already builds. [Gifted Charts
+fit than the Skia stack that Sort of Budget already builds. [Gifted Charts
 releases](https://github.com/Abhinandan-Kushwaha/react-native-gifted-charts/releases)
 
 ### Direct Skia and D3
@@ -148,7 +148,7 @@ support](https://shopify.github.io/react-native-skia/docs/getting-started/web/)
 Victory Native does not publish a separate web support contract in its current
 documentation. Its package has a normal JavaScript import entry, and its
 renderer is Skia, so web use is plausible after the required CanvasKit setup.
-This is an inference, not a verified Budgetly result. Before web reports ship,
+This is an inference, not a verified Sort of Budget result. Before web reports ship,
 make a small Expo web proof with one responsive line chart, one bar chart, and
 press or pointer interaction.
 
@@ -166,11 +166,11 @@ be the only way to get a financial answer.
 
 The Skia `Canvas` supports normal React Native View accessibility properties.
 Skia recommends accessible React Native view overlays for individual drawing
-elements. This provides building blocks, but Budgetly must still define the
+elements. This provides building blocks, but Sort of Budget must still define the
 meaning, focus order, controls, and spoken values. [Skia Canvas accessibility
 documentation](https://shopify.github.io/react-native-skia/docs/canvas/overview/#accessibility)
 
-For each Budgetly chart:
+For each Sort of Budget chart:
 
 - Put a concise native `Text` summary before the chart. State the period,
   current value, change, and important exception.
@@ -188,7 +188,7 @@ screen-reader discovery. It also supports text accessibility values and
 accessibility actions. [React Native accessibility
 documentation](https://reactnative.dev/docs/accessibility)
 
-This rule follows the Budgetly principle that UX is part of correctness and
+This rule follows the Sort of Budget principle that UX is part of correctness and
 that essential information must not depend on color, precise gestures, or
 hidden behavior.
 
@@ -209,7 +209,7 @@ After installation, verify:
 ### Revised recommendation
 
 The concern about Victory Native is valid. Direct Skia plus selected D3 modules
-is a reasonable fit if Budgetly wants control over chart layout and interaction,
+is a reasonable fit if Sort of Budget wants control over chart layout and interaction,
 not only control over colors and drawing nodes.
 
 Replace `victory-native` with two direct runtime dependencies:
@@ -238,14 +238,14 @@ category bar charts. [D3 scale documentation](https://d3js.org/d3-scale)
 [D3 line documentation](https://d3js.org/d3-shape/line)
 [Skia path documentation](https://shopify.github.io/react-native-skia/docs/shapes/path/)
 
-Use `scaleUtc`, not local-time `scaleTime`, for a Budgetly transaction date.
+Use `scaleUtc`, not local-time `scaleTime`, for a Sort of Budget transaction date.
 Parse a `YYYY-MM-DD` value with `Date.UTC` and format it with an explicit UTC
 time zone. This keeps a transaction date on the same calendar day when the
 device time zone changes. [D3 UTC scale
 documentation](https://d3js.org/d3-scale/time#scaleUtc)
 
 This change does not mean that each report screen gets a low-level Skia or D3
-interface. It means that one Budgetly chart module owns those low-level tools.
+interface. It means that one Sort of Budget chart module owns those low-level tools.
 That module can change any drawing or interaction without asking a third-party
 chart library to expose another prop.
 
@@ -253,7 +253,7 @@ chart library to expose another prop.
 
 Victory Native `41.26.0` has five runtime dependencies: `d3-scale`,
 `d3-shape`, `d3-zoom`, `its-fine`, and `react-fast-compare`. Its Skia,
-Gesture Handler, and Reanimated dependencies are peers that Budgetly already
+Gesture Handler, and Reanimated dependencies are peers that Sort of Budget already
 owns. [Victory Native package
 metadata](https://github.com/FormidableLabs/victory-native-xl/blob/main/lib/package.json)
 
@@ -271,7 +271,7 @@ Removing Victory also removes `d3-zoom`, `its-fine`, and
 transition packages such as `d3-selection`, `d3-drag`, `d3-transition`,
 `d3-dispatch`, `d3-ease`, and `d3-timer`. The zoom behavior is normally
 attached through a D3 selection and binds event listeners with
-`selection.on`. Budgetly already has a native gesture system, so this branch
+`selection.on`. Sort of Budget already has a native gesture system, so this branch
 does not add useful leverage. [D3 zoom documentation](https://d3js.org/d3-zoom)
 [D3 zoom package metadata](https://github.com/d3/d3-zoom/blob/main/package.json)
 
@@ -384,7 +384,7 @@ net worth, available money, a Reserve, or free balance. This keeps the chart
 away from source records and prevents a second financial calculation path.
 
 Do not add a generic `style`, `renderAxis`, `renderTooltip`, `children`, or
-`components` prop. When Budgetly needs a new chart form, add a new data
+`components` prop. When Sort of Budget needs a new chart form, add a new data
 discriminant and implement it inside this module. Direct Skia gives the
 implementation freedom; callers do not need that complexity.
 
@@ -413,7 +413,7 @@ Keep these implementation areas private under `packages/mobile/src/charts/`:
 - Accessibility. It owns the summary, inspection controls, and complete value
   list, so a report screen cannot forget them.
 - Theme. It assigns semantic colors, dash patterns, marker shapes, spacing,
-  and typography from Budgetly design tokens. A caller supplies labels, not
+  and typography from Sort of Budget design tokens. A caller supplies labels, not
   raw colors.
 
 The external seam has one implementation on iOS and Android. Do not add a
@@ -545,9 +545,9 @@ geometry builders.
 ### Trade-off
 
 This stack exchanges a third-party chart interface for owned implementation
-work. Budgetly must maintain axis layout, interaction, accessible output,
+work. Sort of Budget must maintain axis layout, interaction, accessible output,
 golden tests, and platform checks. In return, the module can implement any
-Budgetly-specific visual or interaction without waiting for Victory Native or
+Sort of Budget–specific visual or interaction without waiting for Victory Native or
 passing library details through every report screen.
 
 The deletion test supports this module: if it is deleted, scale rules, axes,

@@ -56,7 +56,7 @@ const languages = [
 
 /**
  * Type or say a command. It opens a prefilled form; nothing is saved without Save.
- * `budgetly://?command=…` puts a command in the field, for example from an iOS Shortcut.
+ * `budget://?command=…` puts a command in the field, for example from an iOS Shortcut.
  */
 export function CommandBar() {
 	const router = useRouter()

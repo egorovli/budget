@@ -26,7 +26,7 @@ Start this ticket only if the check of issue 10 says to continue.
 
 ## Data
 
-Real data stays in `~/Dev/egorovli/budgetly-seed/` (or `BUDGETLY_SEED_DIR`). It never goes into Git, screenshots, telemetry or model requests. Tests use synthetic fixtures.
+Real data stays in `~/Dev/egorovli/budget-seed/` (or `BUDGET_SEED_DIR`). It never goes into Git, screenshots, telemetry or model requests. Tests use synthetic fixtures.
 
 ## Done when
 

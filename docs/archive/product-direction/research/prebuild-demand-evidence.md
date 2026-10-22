@@ -6,7 +6,7 @@ Question: What can ads, concept pages, waitlists, and prototypes establish befor
 
 ## Finding
 
-These tests can reduce uncertainty before a large build. Each test supports a narrow conclusion about a defined audience, offer, and requested action. A successful campaign is a reason to conduct the next test; it does not establish lasting demand for a working finance application. This is our synthesis of the methods below, not evidence that Budgetly has demand.
+These tests can reduce uncertainty before a large build. Each test supports a narrow conclusion about a defined audience, offer, and requested action. A successful campaign is a reason to conduct the next test; it does not establish lasting demand for a working finance application. This is our synthesis of the methods below, not evidence that Sort of Budget has demand.
 
 ## What the sources establish
 

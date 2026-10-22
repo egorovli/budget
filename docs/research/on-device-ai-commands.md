@@ -4,7 +4,7 @@ Research date: 2026-10-21
 
 ## Question
 
-Can Budgetly turn a typed or spoken sentence into a structured domain command
+Can Sort of Budget turn a typed or spoken sentence into a structured domain command
 on the device, show it for confirmation, and save it? Example sentences:
 
 - "add a payment of 27.50 zł at Żabka for groceries from my Revolut card";
@@ -35,7 +35,7 @@ No option was built or run on a device for this research.
    Expo Module in Swift with a runtime `DynamicGenerationSchema` that lists the
    real Account names of the Book. Do not use Private Cloud Compute.
    **Russian is not an Apple Intelligence language**, so this interpreter is
-   English-only for Budgetly (also no Polish).
+   English-only for Sort of Budget (also no Polish).
 3. **Voice: Apple Speech framework, on device.** Use `SpeechTranscriber`
    (iOS 26+) where `supportedLocales` contains the locale. Fall back to
    `DictationTranscriber`, which uses the on-device dictation models. Apple's
@@ -91,7 +91,7 @@ Apache-2.0), is community-maintained and runs on Node.js and browsers through
 WebAssembly, not in React Native. The guide says "Inference never touches the
 network". [Devices guide](https://cactuscompute.com/blog/needle-supported-devices)
 
-Needle fits Budgetly's task shape well (tool selection, grammar-constrained
+Needle fits Sort of Budget's task shape well (tool selection, grammar-constrained
 extraction, empty result on unknown requests). It needs a custom Expo Module
 over the C API, a check that telemetry is off in the iOS static library, and
 an evaluation of Russian and Polish sentences.
@@ -188,7 +188,7 @@ a later prototype.
 - `PrivateCloudComputeLanguageModel` (iOS 27+): a server model with a 32K
   context, a daily per-user limit, and a managed entitlement.
   [Private Cloud Compute](https://developer.apple.com/documentation/foundationmodels/adding-server-side-intelligence-with-private-cloud-compute)
-  **Do not use it in Budgetly.** It sends the prompt off the device, which
+  **Do not use it in Sort of Budget.** It sends the prompt off the device, which
   conflicts with principle 1.
 - `LanguageModel` protocol and `LanguageModelCapabilities` (`.toolCalling`,
   `.guidedGeneration`, `.reasoning`): other models can back a
@@ -298,7 +298,7 @@ Model sizes (official files):
 - Gemma and SmolLM sizes were not checked against publisher files.
   **Uncertain.**
 
-For Budgetly, Qwen3-0.6B with a JSON-schema grammar in `llama.rn` is the most
+For Sort of Budget, Qwen3-0.6B with a JSON-schema grammar in `llama.rn` is the most
 direct Russian-capable candidate. Its accuracy on finance commands is not
 measured.
 
@@ -450,7 +450,7 @@ not for the interpreter.
 ## Prototype results (2026-10-21)
 
 Needle 3 (`needle3.cact`, revision `d6c7d6a`) ran through its WebAssembly engine in Bun on
-an Apple Silicon Mac, with the Budgetly tool list from `packages/mobile/src/commands/tools.ts`.
+an Apple Silicon Mac, with the Sort of Budget tool list from `packages/mobile/src/commands/tools.ts`.
 Synthetic sentences; one run each.
 
 | Sentence | Result | Time |
@@ -477,7 +477,7 @@ Conclusions:
 - In the app, Needle runs in the browser in a Web Worker and on iOS through `libneedle.a`.
   The WebAssembly engine has no network code. A string scan of the iOS `libneedle.a` found
   no URLs and no telemetry strings.
-- A fine-tune on Budgetly tool calls (Cactus documents one for Needle) is the next step if
+- A fine-tune on Sort of Budget tool calls (Cactus documents one for Needle) is the next step if
   English accuracy matters; Russian would need training data in Russian.
 
 ## Voice input panel from CBT-Quest
@@ -576,11 +576,11 @@ onSnapshot(revision, snapshot)
 
 **Structured output ("intents").** There is no intent parser in the panel. The Draft carries a Template (`Quick Capture`, `ABC`, `Thought Record`). After a local save, the Server Analysis fills template fields with OpenAI Structured Output (`apps/worker/src/analysis/template.ts`, providers for OpenAI, Anthropic, OpenRouter). Server work needs a separate AI permission, frozen before Recording.
 
-### 4. Reuse for Budgetly
+### 4. Reuse for Sort of Budget
 
 Good to reuse:
 
-1. The native module pattern: one Swift Expo module that owns the audio engine, writes the file, emits meter and snapshot events, and runs `SpeechAnalyzer` live and final passes. Budgetly can copy `AppleSpeechTranscription.swift` almost as is. Then drop the file writer if no audio is kept.
+1. The native module pattern: one Swift Expo module that owns the audio engine, writes the file, emits meter and snapshot events, and runs `SpeechAnalyzer` live and final passes. Sort of Budget can copy `AppleSpeechTranscription.swift` almost as is. Then drop the file writer if no audio is kept.
 2. The rule "provisional text is display only; final text is authoritative and inserted at the caret". This fits money amounts: parse only final text.
 3. Revision-numbered full snapshots (not deltas). JS keeps the highest revision. Simple and race-free.
 4. Generation counter plus a synchronous `current` ref for all commands.
@@ -592,14 +592,14 @@ Good to reuse:
 
 Unfinished or problematic:
 
-1. Final transcription on `feat/v2` goes to the Server only (`createTranscriptionPlanV2`). The on-device final path exists (`transcribeFinal`) but is not used, because the language picker was removed. Budgetly would need its own on-device route and a locale rule.
+1. Final transcription on `feat/v2` goes to the Server only (`createTranscriptionPlanV2`). The on-device final path exists (`transcribeFinal`) but is not used, because the language picker was removed. Sort of Budget would need its own on-device route and a locale rule.
 2. `AppleLiveTranscription.convert` creates a new `AVAudioConverter` for each buffer. Create it once.
 3. `appendTranscription` joins fragments with a space. This is wrong for languages without spaces. It is fine for Russian and English.
 4. No VoiceOver announcement for provisional or final text. No "Open Settings" action after a denied permission.
 5. No retry for a failed final pass.
-6. No speech-to-intent step. Budgetly must add its own parser (rules first, or Foundation Models `@Generable` as a later option). Nothing to copy here.
-7. `use-capture-draft.ts` is large (688 lines) and mixes Note save, Template, and audio file ownership. Budgetly needs a smaller controller.
-8. Stack gap: CBT-Quest is on Expo SDK 57 / RN 0.86; Budgetly is on SDK 58 / RN 0.88. Check the Expo module API and `expo-glass-effect` versions before a copy.
+6. No speech-to-intent step. Sort of Budget must add its own parser (rules first, or Foundation Models `@Generable` as a later option). Nothing to copy here.
+7. `use-capture-draft.ts` is large (688 lines) and mixes Note save, Template, and audio file ownership. Sort of Budget needs a smaller controller.
+8. Stack gap: CBT-Quest is on Expo SDK 57 / RN 0.86; Sort of Budget is on SDK 58 / RN 0.88. Check the Expo module API and `expo-glass-effect` versions before a copy.
 9. The README says physical-device qualification of Apple transcription is still required.
 
 ## Uncertain or not confirmed

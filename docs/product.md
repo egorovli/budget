@@ -1,4 +1,4 @@
-# Budgetly: product
+# Sort of Budget: product
 
 Status: 2026-10-21. This file is the single summary of the product decisions. The sources are in [`archive/`](archive/). Domain terms are defined in [`GLOSSARY.md`](../GLOSSARY.md). Decision rules are in [`principles.md`](principles.md). Architecture decisions are in [`adr/`](adr/).
 
@@ -10,7 +10,7 @@ This promise is a founder hypothesis. No user interviews or demand tests have be
 
 ## Current stage
 
-Since 2026-10-21, we build Budgetly for the founder's own use, and we research what can be connected to it. We make no promise to other users. The measure of success: the founder uses the app every week and trusts its numbers. We decide the next step from that use, not from a full product plan.
+Since 2026-10-21, we build Sort of Budget for the founder's own use, and we research what can be connected to it. We make no promise to other users. The measure of success: the founder uses the app every week and trusts its numbers. We decide the next step from that use, not from a full product plan.
 
 ## User
 
@@ -99,4 +99,4 @@ Lessons from the prototype for the next bootstrap:
 
 ## Data for domain checks
 
-The founder's real statements (Erste, Revolut, TBank; 11 Accounts, 1,728 entries; PLN, EUR, USD, RUB, AMD) are in `~/Dev/egorovli/budgetly-seed/`, outside the repository. [`scripts/normalize-seed.py`](../scripts/normalize-seed.py) converts them into one normalized seed. Set `BUDGETLY_SEED_DIR` to use another location. Do not copy this data into the repository, screenshots, telemetry or model requests.
+The founder's real statements (Erste, Revolut, TBank; 11 Accounts, 1,728 entries; PLN, EUR, USD, RUB, AMD) are in `~/Dev/egorovli/budget-seed/`, outside the repository. [`scripts/normalize-seed.py`](../scripts/normalize-seed.py) converts them into one normalized seed. Set `BUDGET_SEED_DIR` to use another location. Do not copy this data into the repository, screenshots, telemetry or model requests.

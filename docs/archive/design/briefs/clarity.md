@@ -1,12 +1,12 @@
 # Clarity — the precise daily instrument
 
-Read SHARED.md first. Your exclusive output directory is `/Users/egorovli/Dev/budgetly/docs/design-experiments/2026-09-concepts/clarity`.
+Read SHARED.md first. Your exclusive output directory is `/Users/egorovli/Dev/budget/docs/design-experiments/2026-09-concepts/clarity`.
 
 ## Inspect these references
 
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/flighty/reference-01.jpg
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/crouton/02.jpg
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/speechify/04.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/flighty/reference-01.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/crouton/02.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/speechify/04.jpg
 
 ## Art direction
 

@@ -5,7 +5,7 @@ import { validateBook } from './model.ts'
 
 function database(): Promise<IDBDatabase> {
 	return new Promise((resolve, reject) => {
-		const request = indexedDB.open('budgetly', 1)
+		const request = indexedDB.open('budget', 1)
 		request.onupgradeneeded = () => {
 			request.result.createObjectStore('snapshots')
 		}
@@ -16,7 +16,7 @@ function database(): Promise<IDBDatabase> {
 			reject(request.error ?? new Error('Local storage is unavailable.'))
 		}
 		request.onblocked = () => {
-			reject(new Error('Close other Budgetly tabs and retry.'))
+			reject(new Error('Close other Sort of Budget tabs and retry.'))
 		}
 	})
 }

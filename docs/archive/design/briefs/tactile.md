@@ -1,12 +1,12 @@
 # Tactile — money with a sense of touch
 
-Read SHARED.md first. Your exclusive output directory is `/Users/egorovli/Dev/budgetly/docs/design-experiments/2026-09-concepts/tactile`.
+Read SHARED.md first. Your exclusive output directory is `/Users/egorovli/Dev/budget/docs/design-experiments/2026-09-concepts/tactile`.
 
 ## Inspect these references
 
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/not-boring-habits/02.jpg
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/structured/02.jpg
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/crouton/02.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/not-boring-habits/02.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/structured/02.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/crouton/02.jpg
 
 ## Art direction
 

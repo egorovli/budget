@@ -1,12 +1,12 @@
 # Daylight — the warm household companion
 
-Read SHARED.md first. Your exclusive output directory is `/Users/egorovli/Dev/budgetly/docs/design-experiments/2026-09-concepts/daylight`.
+Read SHARED.md first. Your exclusive output directory is `/Users/egorovli/Dev/budget/docs/design-experiments/2026-09-concepts/daylight`.
 
 ## Inspect these references
 
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/gentler-streak-fitness-tracker/03.jpg
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/mela-recipe-manager/04.jpg
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/structured/02.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/gentler-streak-fitness-tracker/03.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/mela-recipe-manager/04.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/structured/02.jpg
 
 ## Art direction
 

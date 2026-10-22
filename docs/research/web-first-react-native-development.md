@@ -4,14 +4,14 @@ Research date: 2026-08-13
 
 ## Question
 
-Can Budgetly use Expo web as the default development and testing surface for
+Can Sort of Budget use Expo web as the default development and testing surface for
 roughly 80% of day-to-day work, while keeping iOS simulator and device checks
 for the behavior that only native can validate? If so, what should replace
 SQLite and other native services in the browser?
 
 ## Recommendation
 
-Yes. Use the browser as Budgetly's **fast development surface**, not as an
+Yes. Use the browser as Sort of Budget's **fast development surface**, not as an
 approximation that is allowed to silently pass for iOS.
 
 The recommended split is:
@@ -56,7 +56,7 @@ local Expo/Xcode commands.
 
 ## Current repository fit
 
-Budgetly is already close to this shape:
+Sort of Budget is already close to this shape:
 
 - `packages/mobile` uses Expo SDK 57, React Native 0.86, React Native Web 0.21,
   Expo Router, Metro web output, and a `web` script.
@@ -130,7 +130,7 @@ This option is preferred because it:
 
 - needs no SQLite WASM startup or cross-origin-isolation server headers;
 - uses a stable browser-native storage substrate;
-- supports the atomic multi-record writes Budgetly requires;
+- supports the atomic multi-record writes Sort of Budget requires;
 - makes the web adapter clearly different from, and therefore unable to mask,
   native SQLite-specific behavior;
 - remains replaceable behind the shared contract.
@@ -157,7 +157,7 @@ atomic financial writes. [Expo SQLite: transactions](https://docs.expo.dev/versi
 [Expo SQLite: SQLCipher](https://docs.expo.dev/versions/latest/sdk/sqlite/#sqlcipher)
 
 Expo SQLite web remains worth a **bounded parity spike later**. If a future SDK
-marks it stable and it passes Budgetly's persistence contract, the web adapter
+marks it stable and it passes Sort of Budget's persistence contract, the web adapter
 can change without changing domain or screen code.
 
 ### Not suitable: `localStorage` or AsyncStorage-shaped entity storage

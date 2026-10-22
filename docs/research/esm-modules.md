@@ -4,7 +4,7 @@ Research date: 2026-08-15
 
 ## Question
 
-How should Budgetly use ECMAScript modules (ESM) across its Bun monorepo and
+How should Sort of Budget use ECMAScript modules (ESM) across its Bun monorepo and
 its Expo/React Native application? This includes package module markers,
 TypeScript module settings, import file extensions, package entry points, JSON,
 CommonJS (CJS) interoperation, and Expo Router files.
@@ -118,7 +118,7 @@ extension. Thus `./item.js` does not mean `./item.ts` in this Expo application.
 [Bun: module resolution](https://bun.sh/docs/runtime/module-resolution)
 [Metro: module resolution](https://metrobundler.dev/docs/resolution/)
 
-This difference is why Budgetly must use source extensions in Metro source. A
+This difference is why Sort of Budget must use source extensions in Metro source. A
 Node-oriented `.js`-in-TypeScript convention is only correct for a compilation
 that emits a parallel `.js` file tree.
 
@@ -211,7 +211,7 @@ the emitted JavaScript. [Node.js: mandatory file extensions](https://nodejs.org/
 This repository's mobile app does not emit such a tree. Metro consumes `.ts`
 and `.tsx` directly, so `.js` would point at a file that does not exist.
 
-If a future Budgetly package emits JavaScript, give it a separate configuration:
+If a future Sort of Budget package emits JavaScript, give it a separate configuration:
 
 ```json
 {
@@ -242,7 +242,7 @@ configuration. It has `noEmit`, so there is no output to rewrite.
 
 ## Package `exports` and `imports`
 
-Do not add an `exports` map to `@budgetly/mobile`. It is an application entry,
+Do not add an `exports` map to `@budget/mobile`. It is an application entry,
 not an imported library. Keep its `main` entry for Expo and make its local path
 exact:
 
@@ -252,12 +252,12 @@ exact:
 }
 ```
 
-When Budgetly adds a real shared workspace package, expose a small public
+When Sort of Budget adds a real shared workspace package, expose a small public
 surface. Prefer an emitted ESM package over exporting a large source tree:
 
 ```json
 {
-  "name": "@budgetly/domain",
+  "name": "@budget/domain",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -441,5 +441,5 @@ Emitted Node package   -> output-relative .js and package exports
 Node/Bun JSON tool     -> .json with { type: "json" }
 ```
 
-This contract gives Budgetly explicit resolution without pretending that
+This contract gives Sort of Budget explicit resolution without pretending that
 Metro, Bun, and native Node.js are the same module host.

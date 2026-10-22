@@ -10,7 +10,7 @@ The older AI images and prompts are historical. Do not use them as the copy sour
 
 ## Fixed composition
 
-Keep the existing white and cool-grey surfaces, dark type, cobalt accent, aligned amounts, rows, and device frame. Keep the current type sizes, screen scale, and spacing. Each ad has the Budgetly name, one two-line headline, one supporting sentence, one phone screen, **See how it works**, and **In development · Sample screens**. Keep the disclosure readable.
+Keep the existing white and cool-grey surfaces, dark type, cobalt accent, aligned amounts, rows, and device frame. Keep the current type sizes, screen scale, and spacing. Each ad has the Sort of Budget name, one two-line headline, one supporting sentence, one phone screen, **See how it works**, and **In development · Sample screens**. Keep the disclosure readable.
 
 ## Screen evidence
 

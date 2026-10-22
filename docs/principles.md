@@ -1,6 +1,6 @@
 # Project principles
 
-These principles govern product and engineering decisions in Budgetly, in the
+These principles govern product and engineering decisions in Sort of Budget, in the
 order listed below. We do not knowingly compromise a higher-priority principle
 to improve a lower-priority one. Security and correctness are release gates: if
 they conflict or either is unresolved, we do not ship until the risk is resolved.

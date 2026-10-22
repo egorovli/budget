@@ -9,7 +9,7 @@ export interface Progress {
 }
 
 function cacheName(model: ModelEntry): string {
-	return `budgetly-model-${model.id}-${model.version}`
+	return `budget-model-${model.id}-${model.version}`
 }
 
 async function sha256(bytes: ArrayBuffer): Promise<string> {

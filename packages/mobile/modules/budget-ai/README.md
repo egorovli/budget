@@ -1,7 +1,7 @@
-# budgetly-ai
+# budget-ai
 
-Local Expo module (`BudgetlyAI`, iOS only) for voice input and model interpreters. The
-TypeScript contract is in `src/budgetly-ai-module.ts` and `src/budgetly-ai.types.ts`.
+Local Expo module (`BudgetAI`, iOS only) for voice input and model interpreters. The
+TypeScript contract is in `src/budget-ai-module.ts` and `src/budget-ai.types.ts`.
 
 ## Privacy rules
 
@@ -40,7 +40,7 @@ choices, numbers are `Double`. An extra `no_matching_tool` choice gives `[]`.
 `ios/Needle.xcframework` is not committed. Build it once before `expo run:ios`:
 
 ```sh
-modules/budgetly-ai/scripts/fetch-needle.sh
+modules/budget-ai/scripts/fetch-needle.sh
 ```
 
 The script downloads `libneedle.a` (device and simulator) and `needle.h` from a pinned
@@ -53,7 +53,7 @@ still builds, and the Needle functions reject with "Needle is not bundled".
 The five non-Expo Swift files type-check in Swift 6 mode against the iOS 27.1 SDK (target iOS 16.4),
 with a stub for the Expo exception classes. Not yet verified with a real build:
 
-- `BudgetlyAIModule.swift` against ExpoModulesCore 58, and the pod build itself.
+- `BudgetAIModule.swift` against ExpoModulesCore 58, and the pod build itself.
 - That Swift finds `CNeedle` through the xcframework headers CocoaPods copies.
 - Linking `libneedle.a` (built with minos iOS 26.2) into an app with a lower deployment target.
 - Whether `needle_load` copies the model bytes (the buffer is kept alive to be safe).

@@ -1,17 +1,17 @@
-# Finance standards and the Budgetly domain model
+# Finance standards and the Sort of Budget domain model
 
 Date: 2026-10-08. Status: research and proposed direction, not an accepted architecture.
 
 ## Finding
 
-Use financial standards for external meanings and exchange formats. Model Budgetly's
+Use financial standards for external meanings and exchange formats. Model Sort of Budget's
 Accounts, financial history, and spending plans around user scenarios. Test a small
 double-entry journal as the calculation model. None of the surveyed standards supplies
 the complete combination of personal budgeting, local storage, and offline reconciliation.
 
 ## What to reuse
 
-The scope column reports source facts. The last column is a recommendation for Budgetly.
+The scope column reports source facts. The last column is a recommendation for Sort of Budget.
 
 | Reference | Scope | Proposed use |
 | --- | --- | --- |
@@ -36,7 +36,7 @@ No conformance, bank coverage, implementation license, or interoperability test 
   time; some timestamps contain a default midnight. Preserve supplied semantics and unknowns.
   See [Transactions: Notes, Mutability, Data Dictionary](https://openbankinguk.github.io/read-write-api-site3/v4.0.1/resources-and-data-models/aisp/Transactions.html).
 - An Account can have several balance types. An available balance can include a credit
-  line. This is not automatically Budgetly's Available money.
+  line. This is not automatically Sort of Budget's Available money.
   See [UK balance model](https://openbankinguk.github.io/read-write-api-site3/v4.0.1/resources-and-data-models/aisp/Balances.html).
 - Berlin Group has optional source IDs and date/exchange details. Pending support varies.
   See [v1.3.16 implementation guidelines](https://berlin-group.org/wp-content/uploads/2026/09/Berlin-Group-NextGenPSD2-Implementation-Guidelines-1.3.16-2025-12-02.pdf).

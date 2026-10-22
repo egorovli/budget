@@ -34,14 +34,14 @@ struct AppleModelStatusRecord: Record {
 
 // `@unchecked Sendable`: the concurrent AsyncFunction closures capture the module. Its state is
 // an actor (`speech`), a lock (`revision`), and `needle`, which is used only on its serial queue.
-public final class BudgetlyAIModule: Module, @unchecked Sendable {
+public final class BudgetAIModule: Module, @unchecked Sendable {
   private let speech = SpeechController()
   private let needle = NeedleRuntime()
   /// Never resets, so revisions increase across listening sessions too.
   private let revision = OSAllocatedUnfairLock(initialState: 0)
 
   public func definition() -> ModuleDefinition {
-    Name("BudgetlyAI")
+    Name("BudgetAI")
 
     Events(onTranscript, onSpeechDownload, onAudioLevel)
 

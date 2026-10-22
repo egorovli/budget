@@ -95,7 +95,7 @@ function cycleScreen(direction) {
 
 function render() {
   const active = currentScreen();
-  document.title = `${active.label} — Budgetly wireframe`;
+  document.title = `${active.label} — Sort of Budget wireframe`;
   document.getElementById("app").innerHTML = `
     <section class="prototype-stage">
       <div class="phone-shell">
@@ -250,7 +250,7 @@ function transactionList(limit = transactions.length) {
 
 function welcomeScreen() {
   return `<div class="center-screen">
-    <h2>Budgetly</h2>
+    <h2>Sort of Budget</h2>
     <span class="eyebrow">Personal finance POC</span>
     <h1>Know what is actually free to spend.</h1>
     <p>Track Accounts, explicit Reserves, and multi-currency operations in one Book.</p>

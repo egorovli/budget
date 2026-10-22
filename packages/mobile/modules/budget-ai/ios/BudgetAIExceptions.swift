@@ -83,7 +83,7 @@ final class AppleModelGenerationException: GenericException<String>, @unchecked 
 
 final class NeedleNotBundledException: Exception, @unchecked Sendable {
   override var reason: String {
-    "Needle is not bundled. Run modules/budgetly-ai/scripts/fetch-needle.sh and rebuild the app."
+    "Needle is not bundled. Run modules/budget-ai/scripts/fetch-needle.sh and rebuild the app."
   }
 }
 

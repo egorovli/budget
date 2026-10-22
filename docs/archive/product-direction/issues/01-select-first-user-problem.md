@@ -18,4 +18,4 @@ Treat these as a connected workflow for individuals and households: maintain the
 
 This is a founder-selected problem hypothesis. It is not evidence that a particular customer segment has demand. Current workarounds, problem frequency, household access needs, acquisition targeting, and willingness to pay remain unverified.
 
-The next discussion will use [Budgetly — product concept 0.1](../concept-v0.md), a provisional brief and four-screen storyboard. The draft is an input to the next decision, not an accepted product specification.
+The next discussion will use [Sort of Budget — product concept 0.1](../concept-v0.md), a provisional brief and four-screen storyboard. The draft is an input to the next decision, not an accepted product specification.

@@ -1,4 +1,4 @@
-# Budgetly: working browser prototype
+# Sort of Budget: working browser prototype
 
 Date: 2026-10-08
 State: functional implementation complete; native file UI validation and audit finding 1 remain open
@@ -292,13 +292,13 @@ bun run lint
 bun run ios --device 2F92B47A-12F0-4595-90B5-651826205E2D --port 8082
 ```
 
-Development uses `http://localhost:8082`. Exported preview uses `http://127.0.0.1:8083`; their browser databases are separate origins. Open Budgetly, select the Sample Book, open an Account and record an Expense. Save opens its real record; edit or confirm removal there. Activity has search, filters and per-currency spending. More opens directories and Prototype data.
+Development uses `http://localhost:8082`. Exported preview uses `http://127.0.0.1:8083`; their browser databases are separate origins. Open Sort of Budget, select the Sample Book, open an Account and record an Expense. Save opens its real record; edit or confirm removal there. Activity has search, filters and per-currency spending. More opens directories and Prototype data.
 
 In Prototype data, export before reset or restore. Load the optional private file from `assets/seed/normalized/seed.json`; open the read-only source preview. It never changes working totals. No file is required for the manual flow. Simulate a purchase, dismiss its banner if needed, then review the retained pending item before saving.
 
 Offline update procedure: rebuild the export, reconnect, open Prototype data, choose “Check offline shell update,” finish open forms and export if needed, then confirm “Activate downloaded shell update.” The app reloads with the new asset cache. Verify a saved record, disconnect and reload again. Tested in Headless Chromium 148.0.0.0 on macOS via agent-browser. Cache versions are content hashes; obsolete prototype asset caches are removed only on activation. Financial records stay in IndexedDB.
 
-For repeatable real-browser storage checks, use a dedicated synthetic browser session. Bundle `tests/browser-storage.ts` with `bun build tests/browser-storage.ts --target browser --format iife --outfile /tmp/budgetly-browser-check.js`, inject it with agent-browser `eval --stdin`, then run `window.budgetlyStorageChecks()`. The check restores the original test Book afterward. Native storage uses exclusive SQLite transactions with the same validation and revision rules. A valid native write also passed after the final stored-schema guard was added.
+For repeatable real-browser storage checks, use a dedicated synthetic browser session. Bundle `tests/browser-storage.ts` with `bun build tests/browser-storage.ts --target browser --format iife --outfile /tmp/budget-browser-check.js`, inject it with agent-browser `eval --stdin`, then run `window.budgetStorageChecks()`. The check restores the original test Book afterward. Native storage uses exclusive SQLite transactions with the same validation and revision rules. A valid native write also passed after the final stored-schema guard was added.
 
 Synthetic screenshots: [capture details](screenshots/captured-expense.png), [source scale fixture](screenshots/source-synthetic.png), [Counterparties on a phone](screenshots/counterparties-phone.png), [deep Category path](screenshots/categories-deep-phone.png), [native saved balances](screenshots/ios-accounts.png), [dark contrast finding](screenshots/account-dark-audit.png).
 

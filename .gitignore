@@ -25,4 +25,4 @@ build/
 
 # Private bank statements and normalized seed data
 assets/seed/
-# Real statements now live in ../budgetly-seed (see docs/product.md)
+# Real statements now live in ../budget-seed (see docs/product.md)

@@ -12,7 +12,7 @@ Each first-wave ad uses the primary headline. Alternate headlines and motion are
 
 **Subline:** Bring in transactions from your connected bank accounts.
 
-**Primary post text:** Coffee, groceries, the bus home. You’ve already paid for them. Budgetly would bring those bank transactions into your budget so you don’t have to type them all in. See the preview. In development; supported banks are still to be confirmed.
+**Primary post text:** Coffee, groceries, the bus home. You’ve already paid for them. Sort of Budget would bring those bank transactions into your budget so you don’t have to type them all in. See the preview. In development; supported banks are still to be confirmed.
 
 **Later headline alternative:** Your bank transactions, without the typing.
 
@@ -29,7 +29,7 @@ Each first-wave ad uses the primary headline. Alternate headlines and motion are
 
 **Later Search intent seeds:** expense tracker bank sync, automatic transaction tracker. These are research seeds, not verified volume, CPC, or an active keyword list.
 
-**Matching page limit:** Budgetly is still in development. Supported banks and countries are not confirmed. Bank updates may be delayed. The screen shows sample data.
+**Matching page limit:** Sort of Budget is still in development. Supported banks and countries are not confirmed. Bank updates may be delayed. The screen shows sample data.
 
 ## 02 — Envelope budgeting
 
@@ -62,7 +62,7 @@ Each first-wave ad uses the primary headline. Alternate headlines and motion are
 
 **Subline:** Find a payment without checking each bank app.
 
-**Primary post text:** You remember buying it. You just can’t remember which account you used. Search for the shop and find the payment, with the date and account right there. See the Budgetly preview.
+**Primary post text:** You remember buying it. You just can’t remember which account you used. Search for the shop and find the payment, with the date and account right there. See the Sort of Budget preview.
 
 **Later headline alternative:** Find that one payment.
 
@@ -87,7 +87,7 @@ Each first-wave ad uses the primary headline. Alternate headlines and motion are
 
 **Subline:** Check what’s left after the money you’ve set aside.
 
-**Primary post text:** There’s $5,000 in your accounts, but $4,400 is already set aside. If you spend $120, you’d have $480 left free. That’s the kind of check we’re building into Budgetly. Try the sample.
+**Primary post text:** There’s $5,000 in your accounts, but $4,400 is already set aside. If you spend $120, you’d have $480 left free. That’s the kind of check we’re building into Sort of Budget. Try the sample.
 
 **Later headline alternative:** Check what a purchase would leave you.
 

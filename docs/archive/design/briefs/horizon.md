@@ -1,12 +1,12 @@
 # Horizon — the beautiful forecast
 
-Read SHARED.md first. Your exclusive output directory is `/Users/egorovli/Dev/budgetly/docs/design-experiments/2026-09-concepts/horizon`.
+Read SHARED.md first. Your exclusive output directory is `/Users/egorovli/Dev/budget/docs/design-experiments/2026-09-concepts/horizon`.
 
 ## Inspect these references
 
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/tide-guide-charts-tables/03.jpg
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/lumy/02.jpg
-- /Users/egorovli/Dev/budgetly/docs/design-references/apple-design-awards/images/sunlitt/04.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/tide-guide-charts-tables/03.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/lumy/02.jpg
+- /Users/egorovli/Dev/budget/docs/design-references/apple-design-awards/images/sunlitt/04.jpg
 
 ## Art direction
 

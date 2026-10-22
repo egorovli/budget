@@ -13,7 +13,7 @@ internal import CNeedle
 /// library at the pinned revision imports no network or `getenv` symbols (checked with `nm -u`),
 /// so it seems to have no telemetry at all; verify with a network trace on a device.
 final class NeedleRuntime: @unchecked Sendable {
-  static let queue = DispatchQueue(label: "io.egorov.budgetly.needle", qos: .userInitiated)
+  static let queue = DispatchQueue(label: "io.egorov.budget.needle", qos: .userInitiated)
 
   private static let outputCapacity = 16_384
   private static let maxNewTokens: Int32 = 256

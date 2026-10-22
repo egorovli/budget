@@ -5,7 +5,7 @@ import { logLimit } from './log.ts'
 // The command log in its own table of the app database. The Book snapshot never includes it.
 
 async function database() {
-	const db = await openDatabaseAsync('budgetly.db')
+	const db = await openDatabaseAsync('budget.db')
 	await db.execAsync(
 		'CREATE TABLE IF NOT EXISTS command_log (id TEXT PRIMARY KEY, at TEXT NOT NULL, value TEXT NOT NULL)'
 	)

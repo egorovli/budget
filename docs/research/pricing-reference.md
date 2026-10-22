@@ -1,6 +1,6 @@
 # Paid finance app pricing reference
 
-Checked: 2026-09-12. Sources: first-party public pages. These are published offers, **not evidence that Budgetly users will pay these amounts**. Prices below are USD; no exchange-rate conversion was applied. Monthly billing and an annual price divided by twelve are different offers. Promotions are excluded.
+Checked: 2026-09-12. Sources: first-party public pages. These are published offers, **not evidence that Sort of Budget users will pay these amounts**. Prices below are USD; no exchange-rate conversion was applied. Monthly billing and an annual price divided by twelve are different offers. Promotions are excluded.
 
 | Alternative | Published standard price | Positioning and region notes |
 | --- | --- | --- |
@@ -12,10 +12,10 @@ Checked: 2026-09-12. Sources: first-party public pages. These are published offe
 
 Monarch's live pricing extraction omitted its interactive price cards in one fetch; its first-party indexed pricing showed both annual tiers. Its official billing guide independently states the Core monthly and annual rates. Confirm the live checkout when a precise purchase comparison is needed. App Store offers, taxes, promotions, and eligibility can differ. No checkout was started.
 
-## Implications for Budgetly's experiment
+## Implications for Sort of Budget's experiment
 
 The paid reference offers span roughly $95–109/year for core personal finance products, alongside a free software alternative. This is a reference range, not a recommended final price. Household support, account aggregation, envelope budgeting, and local operation already exist in this market. Do not advertise them as inventions or claim that competitors cannot perform them.
 
-The [experiment kit's offer guide](../archive/product-direction/demand-kit/LANDING-AND-OFFERS.md) owns the proposed Budgetly test price and later price variations. Those are planning assumptions, not findings from competitor prices. Test other regions separately in explicit currencies; do not silently mix region effects with price effects.
+The [experiment kit's offer guide](../archive/product-direction/demand-kit/LANDING-AND-OFFERS.md) owns the proposed Sort of Budget test price and later price variations. Those are planning assumptions, not findings from competitor prices. Test other regions separately in explicit currencies; do not silently mix region effects with price effects.
 
 First keep one visible proposed price across message tests. Once an audience/message combination merits further work, vary price while holding the offer and requested action constant. Use accurate prelaunch wording. A price-visible signup is stronger than a price-hidden signup but remains stated interest. A completed paid pilot or clearly disclosed paid reservation is a different test and needs an approved, concrete offer and payment/refund process. Measure actual payments, cancellations, delivery cost, and continued use before claiming commercial demand.

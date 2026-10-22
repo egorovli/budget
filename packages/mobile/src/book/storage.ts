@@ -6,7 +6,7 @@ import { validateBook } from './model.ts'
 // so that a stale screen cannot overwrite newer data.
 
 async function database() {
-	const db = await openDatabaseAsync('budgetly.db')
+	const db = await openDatabaseAsync('budget.db')
 	await db.execAsync(
 		'CREATE TABLE IF NOT EXISTS snapshots (id TEXT PRIMARY KEY, value TEXT NOT NULL, revision INTEGER NOT NULL)'
 	)

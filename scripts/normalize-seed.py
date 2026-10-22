@@ -16,7 +16,7 @@ from pathlib import Path
 
 # Private statements live outside the repository.
 ROOT = Path(
-    os.environ.get("BUDGETLY_SEED_DIR", Path(__file__).resolve().parents[2] / "budgetly-seed/seed")
+    os.environ.get("BUDGET_SEED_DIR", Path(__file__).resolve().parents[2] / "budget-seed/seed")
 )
 DATE_EN = re.compile(r"^[A-Z][a-z]{2} \d{1,2}, \d{4}$")
 ACCOUNT = re.compile(r"^(Personal Account|Kids & Teen|Aion)\s+\(([A-Z]{3})\)$")
@@ -418,7 +418,7 @@ def write_outputs(data, output):
     readme = f"""# Начальные данные
 
 Обработано {len(data['sources'])} исходных файлов, {len(data['accounts'])} разделов счетов,
-{len(data['entries'])} операций. Исходники сохранены. Все файлы в `$BUDGETLY_SEED_DIR`
+{len(data['entries'])} операций. Исходники сохранены. Все файлы в `$BUDGET_SEED_DIR`
 содержат личные данные и исключены из Git. Обработка выполняется локально.
 
 - `entries.csv` — единая таблица операций: UTF-8 с BOM, разделитель — запятая.

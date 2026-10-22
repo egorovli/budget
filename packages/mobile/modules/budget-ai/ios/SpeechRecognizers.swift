@@ -85,7 +85,7 @@ final class TranscriptAccumulator: Sendable {
 }
 
 /// Joins with a space. Correct for English, Russian, and Polish; wrong for languages
-/// without spaces (not supported by Budgetly).
+/// without spaces (not supported by Sort of Budget).
 private func joinTranscript(_ existing: String, _ fragment: String) -> String {
   let normalized = fragment.trimmingCharacters(in: .whitespacesAndNewlines)
   guard !normalized.isEmpty else { return existing }

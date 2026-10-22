@@ -16,13 +16,13 @@ The user wants to define a useful individual/household finance product, show moc
 
 Research branch: `research/prebuild-demand-evidence`.
 
-Research worktree: `/private/tmp/budgetly-prebuild-demand-evidence`.
+Research worktree: `/private/tmp/budget-prebuild-demand-evidence`.
 
 ## Answer
 
 Resolved on 2026-09-12 through a research subagent. Ads and waitlists can supply evidence of initial interest in a specific offer among the people reached. They do not by themselves establish willingness to pay, financial-data trust, or repeated use. Prototypes can test comprehension and workflow; separate checks are needed for financial correctness and bank synchronization.
 
-Specify the hypothesis, audience, offer, requested action, metrics, decision thresholds, and inconclusive outcomes before launch. Interpret changes in audience, channel, message, and price as possible alternative explanations. Follow low-effort responses with behavior tied to the proposed value, without treating one failed campaign as proof of no demand. These are research findings, not a selected experiment or a finding of demand for Budgetly.
+Specify the hypothesis, audience, offer, requested action, metrics, decision thresholds, and inconclusive outcomes before launch. Interpret changes in audience, channel, message, and price as possible alternative explanations. Follow low-effort responses with behavior tied to the proposed value, without treating one failed campaign as proof of no demand. These are research findings, not a selected experiment or a finding of demand for Sort of Budget.
 
 Evidence and source limitations: [Evidence before building the finance application](../research/prebuild-demand-evidence.md).
 

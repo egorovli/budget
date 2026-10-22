@@ -1,4 +1,4 @@
-# Validate demand for Budgetly before a full build
+# Validate demand for Sort of Budget before a full build
 
 Label: wayfinder:map
 
