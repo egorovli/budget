@@ -2,12 +2,51 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { today } from '../book/model.ts'
-import { useBook } from '../book/provider.tsx'
+import { newId, useBook } from '../book/provider.tsx'
 import { colors, errorText, Icon, styles as ui } from '../ui.tsx'
 import { answer } from './answer.ts'
+import { describeDraft } from './describe.ts'
+import type { CommandKind } from './draft.ts'
+import type { LogEntry } from './log.ts'
+import { recordCommand } from './use-command-log.ts'
 import { interpret } from './interpret.ts'
 import { interpreterContext, openDraft } from './open-draft.ts'
 import { useVoice } from './use-voice.ts'
+
+const formNames: Partial<Record<CommandKind, string>> = {
+	expense: 'expense',
+	income: 'income',
+	transfer: 'Transfer',
+	balance: 'bank balance',
+	account: 'new Account',
+	reserve: 'Reserve',
+	edit_last: 'last record',
+	delete_last: 'last record (delete ready)',
+	rate: 'rate'
+}
+
+interface Voiced {
+	locale: string
+	heard: string
+}
+
+function logEntry(text: string, voiced: Voiced | null): LogEntry {
+	return {
+		id: newId(),
+		at: new Date().toISOString(),
+		input: voiced ? 'voice' : 'typed',
+		locale: voiced?.locale ?? null,
+		text,
+		heard: voiced && voiced.heard !== text ? voiced.heard : null,
+		rules: null,
+		model: null,
+		raw: null,
+		result: null,
+		outcome: '',
+		error: null,
+		milliseconds: null
+	}
+}
 
 const languages = [
 	{ locale: 'en-US', label: 'EN', name: 'English' },
@@ -35,33 +74,50 @@ export function CommandBar() {
 		}
 	}, [command])
 
-	const submit = async (sentence: string) => {
+	/** Interprets a sentence, acts on it, and writes what happened to the command log. */
+	const submit = async (sentence: string, voiced: Voiced | null = null) => {
 		if (sentence.trim() === '' || busy) {
 			return
 		}
 		setBusy(true)
 		setMessage(null)
 		setReply(null)
+		const entry = logEntry(sentence, voiced)
 		try {
-			const { draft } = await interpret(sentence, interpreterContext(book, today()))
+			const result = await interpret(sentence, interpreterContext(book, today()))
+			const { draft } = result
+			Object.assign(entry, {
+				rules: describeDraft(book, result.rules),
+				model: result.model,
+				raw: result.raw,
+				result: describeDraft(book, draft),
+				error: result.error,
+				milliseconds: result.milliseconds
+			})
 			if (draft.kind === 'question') {
-				setReply(answer(book, draft))
+				entry.outcome = answer(book, draft)
+				setReply(entry.outcome)
 				return
 			}
 			if (draft.kind === 'update_rates') {
 				await refreshRates()
-				setReply('Rates updated from NBP.')
+				entry.outcome = 'Rates updated from NBP.'
+				setReply(entry.outcome)
 				setText('')
 				return
 			}
 			const problem = openDraft(router, book, draft)
+			entry.outcome = problem ?? `Opened the ${formNames[draft.kind] ?? draft.kind} form.`
 			setMessage(problem)
 			if (!problem) {
 				setText('')
 			}
 		} catch (reason) {
-			setMessage(errorText(reason))
+			entry.error = errorText(reason)
+			entry.outcome = 'Failed.'
+			setMessage(entry.error)
 		} finally {
+			recordCommand(entry)
 			setBusy(false)
 		}
 	}
@@ -69,10 +125,17 @@ export function CommandBar() {
 	const listening = voice.phase === 'listening' || voice.phase === 'starting'
 	const toggleVoice = async () => {
 		if (listening) {
-			const final = await voice.stop()
-			if (final) {
-				setText(final)
-				await submit(final)
+			const heard = await voice.stop()
+			if (heard?.text) {
+				setText(heard.text)
+				await submit(heard.text, { locale, heard: heard.heard })
+			} else if (heard) {
+				// Nothing recognized: the log still shows what was heard live and why it failed.
+				recordCommand({
+					...logEntry('', { locale, heard: heard.heard }),
+					outcome: 'Nothing recognized.',
+					error: heard.error
+				})
 			}
 			return
 		}

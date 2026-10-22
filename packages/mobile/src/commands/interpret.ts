@@ -27,6 +27,8 @@ function parseCalls(raw: string): { calls: ToolCall[]; confidence: number | null
 
 export interface Interpretation {
 	draft: CommandDraft
+	/** What the rules read alone, before the merge. */
+	rules: CommandDraft
 	/** Raw model output, for the AI settings test field. */
 	raw: string | null
 	model: ModelName | null
@@ -64,7 +66,14 @@ export async function interpret(
 	const rules = interpretWithRules(sentence, context)
 	// Questions and edits are plain phrases: answer at once, without the model's seconds.
 	if (ruleOnlyKinds.has(rules.kind) && only === null) {
-		return { draft: rules, raw: null, model: null, error: null, milliseconds: Date.now() - started }
+		return {
+			draft: rules,
+			rules,
+			raw: null,
+			model: null,
+			error: null,
+			milliseconds: Date.now() - started
+		}
 	}
 	try {
 		const { raw, model } = await runModel(sentence, context, only)
@@ -72,6 +81,7 @@ export async function interpret(
 		const modelDraft = call ? draftFromToolCall(call, context) : null
 		return {
 			draft: forKind(model ? merge(rules, modelDraft, sentence, model, context) : rules),
+			rules,
 			raw,
 			model,
 			error: null,
@@ -80,6 +90,7 @@ export async function interpret(
 	} catch (error) {
 		return {
 			draft: rules,
+			rules,
 			raw: null,
 			model: null,
 			error: error instanceof Error ? error.message : 'The model failed.',

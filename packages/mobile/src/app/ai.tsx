@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Platform, Text, View } from 'react-native'
+import { Platform, Pressable, StyleSheet, Text, View } from 'react-native'
 import type { AppleModelStatus, SpeechStatus } from '../../modules/budgetly-ai/index.ts'
 import { downloadSize, formatBytes, needle } from '~/ai/catalog.ts'
 // biome-ignore lint/correctness/useImportExtensions: platform seam, Metro selects model-store.web.ts on web
@@ -9,17 +9,20 @@ import { download, isDownloaded, remove } from '~/ai/model-store'
 import { forgetNeedle } from '~/ai/needle'
 import type { Book } from '~/book/model.ts'
 import { today } from '~/book/model.ts'
-import { formatAmount } from '~/book/money.ts'
 import { useBook } from '~/book/provider.tsx'
-import type { CommandDraft } from '~/commands/draft.ts'
+import { describeDraft } from '~/commands/describe.ts'
+import type { LogEntry } from '~/commands/log.ts'
 import type { Interpretation, ModelName } from '~/commands/interpret.ts'
 import { interpret, native } from '~/commands/interpret.ts'
 import { interpreterContext } from '~/commands/open-draft.ts'
 import { interpretWithRules } from '~/commands/rules.ts'
+import { useCommandLog } from '~/commands/use-command-log.ts'
 import {
 	Button,
 	Choice,
 	ConfirmButton,
+	colors,
+	Empty,
 	ErrorText,
 	errorText,
 	Field,
@@ -214,37 +217,18 @@ const engines: readonly Engine[] = ['rules', 'apple', 'needle']
 const lineBreak = /\n|\|/
 const mono = { fontFamily: Platform.select({ ios: 'Menlo', default: 'monospace' }) }
 
-/** One line per engine: what each one read from the sentence, to compare them. */
-function summary(book: Book, draft: CommandDraft): string {
-	const name = (id: string | null) =>
-		[...book.accounts, ...book.reserves].find(item => item.id === id)?.name ?? null
-	const parts = [
-		draft.kind,
-		draft.amount && draft.currency ? formatAmount(draft.amount, draft.currency) : draft.amount,
-		name(draft.accountId),
-		draft.toAccountId ? `→ ${name(draft.toAccountId)}` : null,
-		draft.reserveId ? `from ${name(draft.reserveId)}` : null,
-		draft.received && draft.toAccountId ? `received ${draft.received}` : null,
-		draft.available === false ? 'not in Available money' : null,
-		draft.question,
-		draft.rate,
-		draft.date,
-		draft.note ? `“${draft.note}”` : null,
-		draft.uncertain.length > 0 ? `check: ${draft.uncertain.join(', ')}` : null
-	]
-	return parts.filter(Boolean).join(' · ')
-}
-
 async function compare(sentence: string, book: Book): Promise<string> {
 	const context = interpreterContext(book, today())
 	const lines = [sentence]
 	for (const engine of engines) {
 		if (engine === 'rules') {
-			lines.push(`  rules   ${summary(book, interpretWithRules(sentence, context))}`)
+			lines.push(`  rules   ${describeDraft(book, interpretWithRules(sentence, context))}`)
 			continue
 		}
 		const result = await interpret(sentence, context, engine)
-		const read = result.model ? summary(book, result.draft) : (result.error ?? 'not available')
+		const read = result.model
+			? describeDraft(book, result.draft)
+			: (result.error ?? 'not available')
 		lines.push(`  ${engine.padEnd(7)} ${read} · ${result.milliseconds} ms`)
 	}
 	return lines.join('\n')
@@ -354,6 +338,106 @@ function TrySection() {
 	)
 }
 
+function time(iso: string): string {
+	const date = new Date(iso)
+	const pad = (value: number) => String(value).padStart(2, '0')
+	return `${date.getMonth() + 1}/${date.getDate()} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
+function Line({ label, children }: { label: string; children: string | null }) {
+	if (!children) {
+		return null
+	}
+	return (
+		<Text
+			style={styles.detail}
+			selectable={true}
+		>
+			<Text style={log.label}>{label} </Text>
+			{children}
+		</Text>
+	)
+}
+
+/** One command: what was said, what each step read, and what the app did. Tap shows the raw model output. */
+function LogItem({ entry }: { entry: LogEntry }) {
+	const [open, setOpen] = useState(false)
+	const meta = [
+		time(entry.at),
+		entry.input === 'voice' ? `voice ${entry.locale ?? ''}`.trim() : 'typed',
+		entry.milliseconds === null ? null : `${entry.milliseconds} ms`
+	]
+	return (
+		<Pressable
+			accessibilityRole='button'
+			accessibilityHint={open ? 'Hides the model output' : 'Shows the model output'}
+			onPress={() => setOpen(!open)}
+			style={log.item}
+		>
+			<Text style={styles.detail}>{meta.filter(Boolean).join(' · ')}</Text>
+			<Text
+				style={styles.body}
+				selectable={true}
+			>
+				{entry.text === '' ? '(nothing recognized)' : `“${entry.text}”`}
+			</Text>
+			<Line label='Heard live:'>{entry.heard ? `“${entry.heard}”` : null}</Line>
+			<Line label='Rules:'>{entry.rules}</Line>
+			<Line label={`${entry.model === 'apple' ? 'Apple' : 'Needle'}, used:`}>
+				{entry.model ? entry.result : null}
+			</Line>
+			<Line label='→'>{entry.outcome}</Line>
+			{entry.error ? <ErrorText>{entry.error}</ErrorText> : null}
+			{open && entry.raw ? (
+				<Text
+					style={[styles.detail, mono]}
+					selectable={true}
+				>
+					{entry.raw}
+				</Text>
+			) : null}
+		</Pressable>
+	)
+}
+
+function LogSection() {
+	const { entries, clear } = useCommandLog()
+	return (
+		<>
+			<Section title='Command log'>
+				{entries.length === 0 ? (
+					<Empty>Commands from the main screen appear here. They stay on this iPhone.</Empty>
+				) : null}
+				{entries.map(entry => (
+					<LogItem
+						key={entry.id}
+						entry={entry}
+					/>
+				))}
+			</Section>
+			{entries.length > 0 ? (
+				<ConfirmButton
+					title='Clear the log'
+					confirmTitle='Tap again to clear'
+					onConfirm={() => void clear()}
+				/>
+			) : null}
+		</>
+	)
+}
+
+const log = StyleSheet.create({
+	item: {
+		marginLeft: 16,
+		paddingRight: 16,
+		paddingVertical: 12,
+		gap: 4,
+		borderBottomWidth: StyleSheet.hairlineWidth,
+		borderBottomColor: colors.separator
+	},
+	label: { color: colors.ink, fontWeight: '600' }
+})
+
 export default function AIScreen() {
 	return (
 		<Screen>
@@ -365,6 +449,7 @@ export default function AIScreen() {
 			<SpeechSection />
 			<NeedleSection />
 			<TrySection />
+			<LogSection />
 		</Screen>
 	)
 }

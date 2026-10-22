@@ -8,6 +8,12 @@ import { errorText } from '../ui.tsx'
 
 export type VoicePhase = 'idle' | 'starting' | 'listening' | 'stopping'
 
+export interface Heard {
+	text: string | null
+	heard: string
+	error: string | null
+}
+
 export function useVoice() {
 	const [phase, setPhase] = useState<VoicePhase>('idle')
 	const [preview, setPreview] = useState('')
@@ -16,6 +22,7 @@ export function useVoice() {
 	const current = useRef<VoicePhase>('idle')
 	const revision = useRef(0)
 	const generation = useRef(0)
+	const heard = useRef('')
 
 	const move = (next: VoicePhase) => {
 		current.current = next
@@ -29,6 +36,7 @@ export function useVoice() {
 		const transcript = native.addListener('onTranscript', event => {
 			if (event.revision > revision.current) {
 				revision.current = event.revision
+				heard.current = event.text
 				setPreview(event.text)
 			}
 		})
@@ -47,6 +55,7 @@ export function useVoice() {
 		const session = ++generation.current
 		move('starting')
 		revision.current = 0
+		heard.current = ''
 		setPreview('')
 		setError(null)
 		try {
@@ -60,8 +69,11 @@ export function useVoice() {
 		}
 	}
 
-	/** Stops listening and returns the final text, or null when there was none. */
-	const stop = async (): Promise<string | null> => {
+	/**
+	 * Stops listening. `text` is the final transcript, or null when there was none; `heard` is
+	 * the last live transcript, for the command log.
+	 */
+	const stop = async (): Promise<Heard | null> => {
 		if (!native || current.current !== 'listening') {
 			return null
 		}
@@ -69,10 +81,14 @@ export function useVoice() {
 		move('stopping')
 		try {
 			const text = (await native.stopListening()).trim()
-			return session === generation.current && text !== '' ? text : null
+			if (session !== generation.current) {
+				return null
+			}
+			return { text: text === '' ? null : text, heard: heard.current, error: null }
 		} catch (reason) {
-			setError(reason instanceof Error ? errorText(reason) : 'Cannot finish listening.')
-			return null
+			const message = reason instanceof Error ? errorText(reason) : 'Cannot finish listening.'
+			setError(message)
+			return { text: null, heard: heard.current, error: message }
 		} finally {
 			move('idle')
 			setLevel(0)
