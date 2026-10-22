@@ -55,6 +55,37 @@ function clean(params: Record<string, string | null | undefined>): Record<string
 	)
 }
 
+/**
+ * Opens the last saved record: with the changed fields to edit, or ready to delete. The
+ * user still confirms on the form.
+ */
+function openLast(
+	router: ReturnType<typeof useRouter>,
+	book: Book,
+	draft: CommandDraft,
+	uncertain: readonly string[]
+): string | null {
+	const records = [...book.transactions, ...book.transfers]
+	const last = records.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0]
+	if (!last) {
+		return 'Nothing is recorded yet.'
+	}
+	const remove = draft.kind === 'delete_last' ? '1' : null
+	const changed = { uncertain: uncertain.join(','), date: draft.date, note: draft.note, remove }
+	if ('kind' in last) {
+		router.push({
+			pathname: '/expense',
+			params: clean({ ...changed, id: last.id, amount: input(draft.amount) })
+		})
+	} else {
+		router.push({
+			pathname: '/transfer',
+			params: clean({ ...changed, id: last.id, sent: input(draft.amount) })
+		})
+	}
+	return null
+}
+
 /** Returns a message when the draft cannot open a form. */
 export function openDraft(
 	router: ReturnType<typeof useRouter>,
@@ -96,6 +127,7 @@ export function openDraft(
 					fromAccountId: draft.accountId,
 					toAccountId: draft.toAccountId,
 					sent: input(amount),
+					received: input(draft.received),
 					note: draft.note
 				})
 			})
@@ -112,14 +144,37 @@ export function openDraft(
 		case 'account':
 			router.push({
 				pathname: '/account',
-				params: clean({ name: draft.note, currency: draft.currency })
+				params: clean({
+					name: draft.note,
+					currency: draft.currency,
+					amount: input(draft.amount),
+					available: draft.available === false ? '0' : null
+				})
 			})
 			return null
 		case 'reserve':
 			router.push({
 				pathname: '/reserve',
-				params: clean({ name: draft.note, amount: input(draft.amount), currency: draft.currency })
+				params: clean({
+					name: draft.note,
+					amount: input(draft.amount),
+					currency: draft.currency,
+					dueDate: draft.date
+				})
 			})
+			return null
+		case 'edit_last':
+		case 'delete_last':
+			return openLast(router, book, draft, uncertain)
+		case 'rate':
+			router.push({
+				pathname: '/rate',
+				params: clean({ currency: draft.currency, value: draft.rate })
+			})
+			return null
+		case 'question':
+		case 'update_rates':
+			// The command bar answers these itself.
 			return null
 		default:
 			return 'I did not find a command. Try: “27.50 at Żabka from Revolut”.'

@@ -56,6 +56,10 @@ function Content() {
 				options={{ title: 'Transfer', presentation: 'modal' }}
 			/>
 			<Stack.Screen
+				name='rate'
+				options={{ title: 'Exchange rate', presentation: 'modal' }}
+			/>
+			<Stack.Screen
 				name='ai'
 				options={{ title: 'AI on this device' }}
 			/>

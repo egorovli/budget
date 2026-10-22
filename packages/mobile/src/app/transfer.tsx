@@ -21,9 +21,12 @@ interface Params {
 	fromAccountId?: string
 	toAccountId?: string
 	sent?: string
+	received?: string
 	date?: string
 	note?: string
 	uncertain?: string
+	/** "1": the user asked to delete this record. */
+	remove?: string
 	[key: string]: string | undefined
 }
 
@@ -33,16 +36,19 @@ export default function TransferScreen() {
 	const { book, update } = useBook()
 	const existing = book.transfers.find(item => item.id === params.id)
 	const check = new Set(params.uncertain?.split(',') ?? [])
+	// A command can change a saved record ("the last one was yesterday"): its values win.
 	const [fromId, setFromId] = useState(
-		existing?.fromAccountId ?? params.fromAccountId ?? book.accounts[0]?.id ?? ''
+		params.fromAccountId ?? existing?.fromAccountId ?? book.accounts[0]?.id ?? ''
 	)
 	const [toId, setToId] = useState(
-		existing?.toAccountId ?? params.toAccountId ?? book.accounts[1]?.id ?? ''
+		params.toAccountId ?? existing?.toAccountId ?? book.accounts[1]?.id ?? ''
 	)
-	const [sent, setSent] = useState(existing ? formatInput(existing.sent) : (params.sent ?? ''))
-	const [received, setReceived] = useState(existing ? formatInput(existing.received) : '')
-	const [note, setNote] = useState(existing?.note ?? params.note ?? '')
-	const [date, setDate] = useState(existing?.date ?? params.date ?? today())
+	const [sent, setSent] = useState(params.sent ?? (existing ? formatInput(existing.sent) : ''))
+	const [received, setReceived] = useState(
+		params.received ?? (existing ? formatInput(existing.received) : '')
+	)
+	const [note, setNote] = useState(params.note ?? existing?.note ?? '')
+	const [date, setDate] = useState(params.date ?? existing?.date ?? today())
 	const [error, setError] = useState<string | null>(null)
 
 	const from = book.accounts.find(item => item.id === fromId)
@@ -109,6 +115,7 @@ export default function TransferScreen() {
 				onChange={setToId}
 			/>
 			<Field
+				large={true}
 				label={`Sent${from ? `, ${from.currency}` : ''}`}
 				check={check.has('amount')}
 				value={sent}
@@ -147,6 +154,7 @@ export default function TransferScreen() {
 				<ConfirmButton
 					title='Delete transfer'
 					confirmTitle='Tap again to delete'
+					ready={params.remove === '1'}
 					onConfirm={() => {
 						update(current => removeRecord(current, existing.id))
 							.then(close)

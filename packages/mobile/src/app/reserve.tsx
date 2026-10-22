@@ -24,6 +24,7 @@ export default function ReserveScreen() {
 		name?: string
 		amount?: string
 		currency?: string
+		dueDate?: string
 	}>()
 	const { book, update } = useBook()
 	const existing = book.reserves.find(item => item.id === id)
@@ -34,7 +35,7 @@ export default function ReserveScreen() {
 	const [currency, setCurrency] = useState<Currency>(
 		existing?.currency ?? (isCurrency(draft.currency) ? draft.currency : book.baseCurrency)
 	)
-	const [dueDate, setDueDate] = useState(existing?.dueDate ?? '')
+	const [dueDate, setDueDate] = useState(existing?.dueDate ?? draft.dueDate ?? '')
 	const [error, setError] = useState<string | null>(null)
 
 	const save = (closedAt: string | null) => {

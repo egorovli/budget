@@ -14,6 +14,8 @@ export default function AccountScreen() {
 		name?: string
 		amount?: string
 		currency?: string
+		/** "0": the command said not to count this Account. */
+		available?: string
 	}>()
 	const { book, update } = useBook()
 	const existing = book.accounts.find(item => item.id === id)
@@ -21,7 +23,7 @@ export default function AccountScreen() {
 	const [currency, setCurrency] = useState<Currency>(
 		existing?.currency ?? (isCurrency(draft.currency) ? draft.currency : book.baseCurrency)
 	)
-	const [available, setAvailable] = useState(existing?.available ?? true)
+	const [available, setAvailable] = useState(existing?.available ?? draft.available !== '0')
 	const [error, setError] = useState<string | null>(null)
 
 	const save = () => {
@@ -40,7 +42,13 @@ export default function AccountScreen() {
 			})
 		)
 			.then(() =>
-				existing ? close() : router.replace({ pathname: '/balance', params: { accountId } })
+				existing
+					? close()
+					: router.replace({
+							pathname: '/balance',
+							// The opening balance from a command, for example "add account mBank with 8240.55".
+							params: draft.amount ? { accountId, amount: draft.amount } : { accountId }
+						})
 			)
 			.catch((reason: unknown) => setError(errorText(reason)))
 	}

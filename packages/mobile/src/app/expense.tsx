@@ -29,6 +29,8 @@ interface Params {
 	date?: string
 	note?: string
 	uncertain?: string
+	/** "1": the user asked to delete this record. */
+	remove?: string
 	[key: string]: string | undefined
 }
 
@@ -39,19 +41,20 @@ export default function TransactionScreen() {
 	const { book, update } = useBook()
 	const existing = book.transactions.find(item => item.id === params.id)
 	const check = new Set(params.uncertain?.split(',') ?? [])
-	const latest = book.transactions.toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))[0]
+	const latest = [...book.transactions].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0]
+	// A command can change a saved record ("the last one was yesterday"): its values win.
 	const [kind, setKind] = useState<Kind>(existing?.kind ?? params.kind ?? 'expense')
 	const [amount, setAmount] = useState(
-		existing ? formatInput(existing.amount) : (params.amount ?? '')
+		params.amount ?? (existing ? formatInput(existing.amount) : '')
 	)
 	const [accountId, setAccountId] = useState(
-		existing?.accountId ?? params.accountId ?? latest?.accountId ?? book.accounts[0]?.id ?? ''
+		params.accountId ?? existing?.accountId ?? latest?.accountId ?? book.accounts[0]?.id ?? ''
 	)
 	const [reserveId, setReserveId] = useState(
 		(existing?.kind === 'expense' ? existing.reserveUse?.reserveId : params.reserveId) ?? none
 	)
-	const [note, setNote] = useState(existing?.note ?? params.note ?? '')
-	const [date, setDate] = useState(existing?.date ?? params.date ?? today())
+	const [note, setNote] = useState(params.note ?? existing?.note ?? '')
+	const [date, setDate] = useState(params.date ?? existing?.date ?? today())
 	const [error, setError] = useState<string | null>(null)
 
 	const account = book.accounts.find(item => item.id === accountId)
@@ -123,6 +126,7 @@ export default function TransactionScreen() {
 				onChange={setKind}
 			/>
 			<Field
+				large={true}
 				label={`Amount${account ? `, ${account.currency}` : ''}`}
 				check={check.has('amount')}
 				value={amount}
@@ -179,6 +183,7 @@ export default function TransactionScreen() {
 				<ConfirmButton
 					title={`Delete ${existing.kind}`}
 					confirmTitle='Tap again to delete'
+					ready={params.remove === '1'}
 					onConfirm={() => {
 						update(current => removeRecord(current, existing.id))
 							.then(close)

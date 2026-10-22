@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'bun:test'
 import type { CommandDraft, InterpreterContext } from '../src/commands/draft.ts'
-import { interpretWithRules } from '../src/commands/rules.ts'
+import { interpretWithRules, mentions } from '../src/commands/rules.ts'
 
 const context: InterpreterContext = {
 	accounts: [
-		{ id: 'revolut', name: 'Revolut', currency: 'PLN' },
-		{ id: 'erste', name: 'Erste', currency: 'PLN' },
-		{ id: 'cash', name: 'Cash', currency: 'PLN' },
-		{ id: 'tbank', name: 'TBank', currency: 'RUB' }
+		{ id: 'revolut', name: 'Revolut', currency: 'PLN', available: true },
+		{ id: 'erste', name: 'Erste', currency: 'PLN', available: true },
+		{ id: 'cash', name: 'Cash', currency: 'PLN', available: true },
+		{ id: 'tbank', name: 'TBank', currency: 'RUB', available: true }
 	],
 	reserves: [
 		{ id: 'rent', name: 'Rent', currency: 'PLN' },
@@ -179,5 +179,132 @@ describe('interpretWithRules', () => {
 
 	test('ignores zero amounts', () => {
 		expect(interpretWithRules('hello 0', context)).toMatchObject({ kind: 'unknown', amount: null })
+	})
+})
+
+// Names with a currency code, two Accounts at one bank, and savings outside Available money,
+// as in the 2026-10-22 walkthrough.
+const banks: InterpreterContext = {
+	accounts: [
+		{ id: 'mbank', name: 'mBank', currency: 'PLN', available: true },
+		{ id: 'rev-pln', name: 'Revolut PLN', currency: 'PLN', available: true },
+		{ id: 'rev-eur', name: 'Revolut EUR', currency: 'EUR', available: true },
+		{ id: 'cash', name: 'Cash', currency: 'PLN', available: true },
+		{ id: 'savings', name: 'Savings', currency: 'PLN', available: false }
+	],
+	reserves: [
+		{ id: 'rent', name: 'Rent', currency: 'PLN' },
+		{ id: 'zus', name: 'ZUS and tax', currency: 'PLN' }
+	],
+	baseCurrency: 'PLN',
+	today: '2026-10-22'
+}
+
+const walkthrough: [string, Expected][] = [
+	[
+		'27.50 at Żabka from Revolut',
+		{ kind: 'expense', accountId: 'rev-pln', reserveId: null, uncertain: ['accountId'] }
+	],
+	[
+		'spent 27.50 from Revolut PLN at Żabka',
+		{ kind: 'expense', accountId: 'rev-pln', currency: null, note: 'Żabka', uncertain: [] }
+	],
+	['50 EUR dinner from Revolut', { accountId: 'rev-eur', currency: 'EUR' }],
+	[
+		'moved 500 from mBank to Revolut PLN',
+		{ kind: 'transfer', accountId: 'mbank', toAccountId: 'rev-pln' }
+	],
+	[
+		'перевёл 500 злотых с мбанка на револют',
+		{ kind: 'transfer', amount: '50000', accountId: 'mbank', toAccountId: 'rev-pln' }
+	],
+	[
+		'exchanged 430 zł to 98.50 euro on Revolut',
+		{
+			kind: 'transfer',
+			amount: '43000',
+			currency: 'PLN',
+			received: '9850',
+			accountId: 'rev-pln',
+			toAccountId: 'rev-eur'
+		}
+	],
+	[
+		'took 200 cash from the ATM',
+		{ kind: 'transfer', amount: '20000', accountId: null, toAccountId: 'cash' }
+	],
+	[
+		'снял 200 наличными в банкомате с мбанка',
+		{ kind: 'transfer', amount: '20000', accountId: 'mbank', toAccountId: 'cash' }
+	],
+	[
+		'на мбанке сейчас 13098,55',
+		{ kind: 'balance', amount: '1309855', accountId: 'mbank', note: null }
+	],
+	[
+		'отложить 3200 на аренду до 10 ноября',
+		{ kind: 'reserve', amount: '320000', date: '2026-11-10', note: 'аренду' }
+	],
+	[
+		'new reserve for vacation 2000 zł by December',
+		{ kind: 'reserve', amount: '200000', date: '2026-12-31' }
+	],
+	['put aside 900 for insurance by 15 January', { kind: 'reserve', date: '2027-01-15' }],
+	[
+		'добавь счёт Wise 300 евро, не учитывать',
+		{ kind: 'account', note: 'Wise', amount: '30000', currency: 'EUR', available: false }
+	],
+	[
+		"add account Wise with 300 euro, don't count it",
+		{ kind: 'account', note: 'Wise', amount: '30000', currency: 'EUR', available: false }
+	],
+	[
+		'create a wallet Wise in euro with 300, keep it out of available money',
+		{ kind: 'account', available: false }
+	],
+	[
+		'add account Revolut with 1200',
+		{ kind: 'account', note: 'Revolut', amount: '120000', available: null }
+	],
+	['удали последнюю запись', { kind: 'delete_last', amount: null }],
+	['undo', { kind: 'delete_last' }],
+	['измени последнюю на 30', { kind: 'edit_last', amount: '3000' }],
+	['last one was yesterday', { kind: 'edit_last', date: '2026-10-21', amount: null }],
+	['сколько у меня свободно?', { kind: 'question', question: 'free' }],
+	['how much is on mBank?', { kind: 'question', question: 'balance', accountId: 'mbank' }],
+	[
+		'сколько я потратил в жабке в октябре',
+		{
+			kind: 'question',
+			question: 'spent',
+			note: 'жабке',
+			period: { from: '2026-10-01', to: '2026-10-22' }
+		}
+	],
+	[
+		'how much did I spend last month?',
+		{ question: 'spent', period: { from: '2026-09-01', to: '2026-09-30' }, note: null }
+	],
+	[
+		'ile wydałem w tym tygodniu',
+		{ question: 'spent', period: { from: '2026-10-16', to: '2026-10-22' } }
+	],
+	['какой курс евро?', { kind: 'question', question: 'rate', currency: 'EUR' }],
+	['курс евро 4,2512', { kind: 'rate', currency: 'EUR', rate: '4.2512', amount: null }],
+	['update rates', { kind: 'update_rates' }],
+	['обнови курсы', { kind: 'update_rates' }]
+]
+
+describe('interpretWithRules with the walkthrough Book', () => {
+	for (const [sentence, expected] of walkthrough) {
+		test(sentence, () => {
+			expect(interpretWithRules(sentence, banks)).toMatchObject(expected)
+		})
+	}
+
+	test('a model check: names in the sentence', () => {
+		expect(mentions('27.50 at Żabka from Revolut', 'Revolut PLN')).toBe(true)
+		expect(mentions('27,50 в жабке с революта', 'Revolut EUR')).toBe(true)
+		expect(mentions('27.50 at Żabka from Revolut', 'ZUS and tax')).toBe(false)
 	})
 })
