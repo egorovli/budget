@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { ActivityIndicator, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { BookProvider, useBookStatus } from '~/book/provider.tsx'
 import { colors, styles } from '~/ui.tsx'
 
@@ -8,10 +9,12 @@ function Content() {
 	const { ready, error } = useBookStatus()
 	if (error) {
 		return (
-			<View style={[styles.screen, styles.content]}>
-				<Text style={styles.sectionTitle}>Cannot open the Book</Text>
-				<Text style={styles.body}>{error}</Text>
-			</View>
+			<SafeAreaView style={styles.screen}>
+				<View style={styles.content}>
+					<Text style={styles.sectionTitle}>Cannot open the Book</Text>
+					<Text style={styles.body}>{error}</Text>
+				</View>
+			</SafeAreaView>
 		)
 	}
 	if (!ready) {
@@ -22,6 +25,9 @@ function Content() {
 			screenOptions={{
 				headerTintColor: colors.action,
 				headerTitleStyle: { color: colors.ink },
+				headerShadowVisible: false,
+				headerLargeTitleShadowVisible: false,
+				headerBackButtonDisplayMode: 'minimal',
 				contentStyle: { backgroundColor: colors.group }
 			}}
 		>

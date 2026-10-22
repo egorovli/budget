@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { native } from './interpret.ts'
+import { errorText } from '../ui.tsx'
 
 // On-device dictation. The live text is a preview only; the caller interprets the final text.
 // A generation counter drops events from an earlier session, and a ref blocks double taps
@@ -55,7 +56,7 @@ export function useVoice() {
 			}
 		} catch (reason) {
 			move('idle')
-			setError(reason instanceof Error ? reason.message : 'Cannot start listening.')
+			setError(reason instanceof Error ? errorText(reason) : 'Cannot start listening.')
 		}
 	}
 
@@ -70,7 +71,7 @@ export function useVoice() {
 			const text = (await native.stopListening()).trim()
 			return session === generation.current && text !== '' ? text : null
 		} catch (reason) {
-			setError(reason instanceof Error ? reason.message : 'Cannot finish listening.')
+			setError(reason instanceof Error ? errorText(reason) : 'Cannot finish listening.')
 			return null
 		} finally {
 			move('idle')

@@ -1,6 +1,5 @@
 import { useLocalSearchParams } from 'expo-router'
 import { useState } from 'react'
-import { View } from 'react-native'
 import { isDate, reserveRemaining, saveReserve } from '~/book/model.ts'
 import type { Currency } from '~/book/money.ts'
 import { currencies, formatAmount, formatInput, isCurrency, parseAmount } from '~/book/money.ts'
@@ -12,9 +11,9 @@ import {
 	ErrorText,
 	errorText,
 	Field,
+	Group,
 	Row,
 	Screen,
-	styles,
 	useClose
 } from '~/ui.tsx'
 
@@ -70,13 +69,13 @@ export default function ReserveScreen() {
 	return (
 		<Screen>
 			{existing ? (
-				<View style={styles.preview}>
+				<Group tinted={true}>
 					<Row
 						label='Remaining'
 						value={formatAmount(reserveRemaining(book, existing), existing.currency)}
 						detail='The amount minus the expenses paid from this Reserve.'
 					/>
-				</View>
+				</Group>
 			) : null}
 			<Field
 				label='Name'
@@ -86,6 +85,7 @@ export default function ReserveScreen() {
 				placeholder='Rent'
 			/>
 			<Field
+				large={true}
 				label={`Amount, ${currency}`}
 				value={amount}
 				onChangeText={setAmount}

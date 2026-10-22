@@ -1,10 +1,21 @@
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useState } from 'react'
-import { View } from 'react-native'
 import { accountBalance, isDate, recordBalance, today } from '~/book/model.ts'
 import { formatAmount, parseAmount } from '~/book/money.ts'
 import { newId, useBook } from '~/book/provider.tsx'
-import { Button, Empty, ErrorText, Field, Row, Screen, styles, errorText, useClose } from '~/ui.tsx'
+import {
+	Button,
+	Empty,
+	ErrorText,
+	Field,
+	formatDay,
+	Group,
+	Row,
+	Screen,
+	Section,
+	errorText,
+	useClose
+} from '~/ui.tsx'
 
 export default function BalanceScreen() {
 	const router = useRouter()
@@ -27,7 +38,7 @@ export default function BalanceScreen() {
 	const calculated = accountBalance(book, account.id)
 	const history = book.balances
 		.filter(item => item.accountId === account.id)
-		.toSorted((a, b) => b.date.localeCompare(a.date) || b.recordedAt.localeCompare(a.recordedAt))
+		.sort((a, b) => b.date.localeCompare(a.date) || b.recordedAt.localeCompare(a.recordedAt))
 
 	const save = () => {
 		const minor = parseAmount(amount)
@@ -54,7 +65,7 @@ export default function BalanceScreen() {
 
 	return (
 		<Screen>
-			<View style={styles.preview}>
+			<Group tinted={true}>
 				<Row
 					label='Calculated balance'
 					value={
@@ -64,7 +75,7 @@ export default function BalanceScreen() {
 					}
 					detail='The last bank balance minus the expenses recorded after it.'
 				/>
-			</View>
+			</Group>
 			<Field
 				label={`${account.name}: balance in the bank app, ${account.currency}`}
 				value={amount}
@@ -93,15 +104,15 @@ export default function BalanceScreen() {
 				onPress={() => router.replace({ pathname: '/account', params: { id: account.id } })}
 			/>
 			{history.length > 0 ? (
-				<View style={styles.group}>
+				<Section title='Earlier bank balances'>
 					{history.map(item => (
 						<Row
 							key={item.id}
-							label={item.date}
+							label={formatDay(item.date, today())}
 							value={formatAmount(item.amount, account.currency)}
 						/>
 					))}
-				</View>
+				</Section>
 			) : null}
 		</Screen>
 	)

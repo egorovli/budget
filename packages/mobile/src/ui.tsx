@@ -1,4 +1,6 @@
 import { useRouter } from 'expo-router'
+import type { SFSymbol } from 'expo-symbols'
+import { SymbolView } from 'expo-symbols'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import type { TextInputProps } from 'react-native'
@@ -10,18 +12,25 @@ export const colors = {
 	group: '#F4F6FA',
 	ink: '#101319',
 	secondary: '#667182',
+	tertiary: '#A3ABB8',
 	action: '#245BFF',
 	preview: '#EAF1FF',
 	separator: '#E3E7EE',
 	warning: '#9A3412'
 }
 
+/**
+ * Every screen scrolls. On iOS the keyboard insets the content, so a focused field near the
+ * bottom stays visible; a drag down hides the keyboard. Android resizes the window instead.
+ */
 export function Screen({ children }: { children: ReactNode }) {
 	return (
 		<ScrollView
 			style={styles.screen}
 			contentContainerStyle={styles.content}
 			keyboardShouldPersistTaps='handled'
+			keyboardDismissMode='interactive'
+			automaticallyAdjustKeyboardInsets={true}
 			contentInsetAdjustmentBehavior='automatic'
 		>
 			{children}
@@ -29,16 +38,73 @@ export function Screen({ children }: { children: ReactNode }) {
 	)
 }
 
-export function Section({ title, children }: { title: string; children: ReactNode }) {
+/** An SF Symbol on iOS; `fallback` text elsewhere. Icons are decorative: label the control. */
+export function Icon({
+	name,
+	fallback,
+	size = 17,
+	color = colors.action
+}: {
+	name: SFSymbol
+	fallback: string
+	size?: number
+	color?: string
+}) {
+	return (
+		<SymbolView
+			name={name}
+			size={size}
+			tintColor={color}
+			weight='semibold'
+			fallback={<Text style={{ fontSize: size, color }}>{fallback}</Text>}
+		/>
+	)
+}
+
+/** A white card. The negative margin hides the separator under the last row. */
+export function Group({ children, tinted = false }: { children: ReactNode; tinted?: boolean }) {
+	return (
+		<View style={[styles.group, tinted && styles.tinted]}>
+			<View style={styles.groupRows}>{children}</View>
+		</View>
+	)
+}
+
+export function Section({
+	title,
+	action,
+	children
+}: {
+	title: string
+	action?: { title: string; onPress: () => void }
+	children: ReactNode
+}) {
 	return (
 		<View style={styles.section}>
-			<Text
-				style={styles.sectionTitle}
-				accessibilityRole='header'
-			>
-				{title}
-			</Text>
-			<View style={styles.group}>{children}</View>
+			<View style={styles.sectionHeader}>
+				<Text
+					style={styles.sectionTitle}
+					accessibilityRole='header'
+				>
+					{title}
+				</Text>
+				{action ? (
+					<Pressable
+						accessibilityRole='button'
+						onPress={action.onPress}
+						hitSlop={12}
+						style={({ pressed }) => [styles.sectionAction, pressed && styles.pressed]}
+					>
+						<Icon
+							name='plus'
+							fallback='+'
+							size={14}
+						/>
+						<Text style={styles.sectionActionText}>{action.title}</Text>
+					</Pressable>
+				) : null}
+			</View>
+			<Group>{children}</Group>
 		</View>
 	)
 }
@@ -60,6 +126,14 @@ export function Row({ label, value, detail, warning, onPress }: RowProps) {
 				{warning ? <Text style={styles.warning}>{warning}</Text> : null}
 			</View>
 			{value === undefined ? null : <Text style={[styles.body, styles.amount]}>{value}</Text>}
+			{onPress ? (
+				<Icon
+					name='chevron.right'
+					fallback='›'
+					size={13}
+					color={colors.tertiary}
+				/>
+			) : null}
 		</View>
 	)
 	if (!onPress) {
@@ -88,7 +162,8 @@ export function Button({
 }: {
 	title: string
 	onPress: () => void
-	kind?: 'primary' | 'secondary'
+	/** `secondary` is a tinted button; `destructive` is for delete. */
+	kind?: 'primary' | 'secondary' | 'destructive'
 	disabled?: boolean
 }) {
 	return (
@@ -99,29 +174,31 @@ export function Button({
 			onPress={onPress}
 			style={({ pressed }) => [
 				styles.button,
-				kind === 'primary' ? styles.primary : styles.secondary,
+				styles[kind],
 				(pressed || disabled) && styles.pressed
 			]}
 		>
-			<Text style={kind === 'primary' ? styles.primaryText : styles.secondaryText}>{title}</Text>
+			<Text style={styles[`${kind}Text`]}>{title}</Text>
 		</Pressable>
 	)
 }
 
-/** A destructive action that needs a second tap. */
+/** A destructive action that needs a second tap. `ready` starts at the second tap ("delete the last one"). */
 export function ConfirmButton({
 	title,
 	confirmTitle,
-	onConfirm
+	onConfirm,
+	ready = false
 }: {
 	title: string
 	confirmTitle: string
 	onConfirm: () => void
+	ready?: boolean
 }) {
-	const [armed, setArmed] = useState(false)
+	const [armed, setArmed] = useState(ready)
 	return (
 		<Button
-			kind='secondary'
+			kind='destructive'
 			title={armed ? confirmTitle : title}
 			onPress={() => {
 				if (armed) {
@@ -148,8 +225,9 @@ function Label({ label, check }: { label: string; check: boolean }) {
 export function Field({
 	label,
 	check = false,
+	large = false,
 	...props
-}: TextInputProps & { label: string; check?: boolean }) {
+}: TextInputProps & { label: string; check?: boolean; large?: boolean }) {
 	return (
 		<View style={styles.field}>
 			<Label
@@ -159,7 +237,7 @@ export function Field({
 			<TextInput
 				accessibilityLabel={check ? `${label}, check this` : label}
 				placeholderTextColor={colors.secondary}
-				style={[styles.input, check && styles.inputCheck]}
+				style={[styles.input, large && styles.inputLarge, check && styles.inputCheck]}
 				{...props}
 			/>
 		</View>
@@ -227,25 +305,36 @@ export const styles = StyleSheet.create({
 	content: {
 		padding: 20,
 		paddingBottom: 48,
-		gap: 24,
+		gap: 28,
 		maxWidth: 640,
 		width: '100%',
 		alignSelf: 'center'
 	},
-	section: { gap: 8 },
-	sectionTitle: { fontSize: 20, fontWeight: '600', color: colors.ink },
-	group: {
-		backgroundColor: colors.surface,
-		borderRadius: 12,
-		overflow: 'hidden'
-	},
-	row: {
-		minHeight: 52,
-		paddingHorizontal: 16,
-		paddingVertical: 10,
+	section: { gap: 10 },
+	sectionHeader: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		gap: 12,
+		justifyContent: 'space-between',
+		paddingHorizontal: 4
+	},
+	sectionTitle: { fontSize: 20, fontWeight: '600', color: colors.ink },
+	sectionAction: { flexDirection: 'row', alignItems: 'center', gap: 4, minHeight: 44 },
+	sectionActionText: { fontSize: 15, fontWeight: '600', color: colors.action },
+	group: {
+		backgroundColor: colors.surface,
+		borderRadius: 16,
+		borderCurve: 'continuous',
+		overflow: 'hidden'
+	},
+	groupRows: { marginBottom: -StyleSheet.hairlineWidth },
+	row: {
+		minHeight: 56,
+		marginLeft: 16,
+		paddingRight: 16,
+		paddingVertical: 12,
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 10,
 		borderBottomWidth: StyleSheet.hairlineWidth,
 		borderBottomColor: colors.separator
 	},
@@ -254,49 +343,95 @@ export const styles = StyleSheet.create({
 	amount: { fontVariant: ['tabular-nums'], textAlign: 'right', flexShrink: 0 },
 	detail: { fontSize: 14, color: colors.secondary },
 	warning: { fontSize: 14, color: colors.warning },
-	empty: { padding: 16 },
+	empty: { padding: 16, textAlign: 'center' },
 	pressed: { opacity: 0.6 },
 	button: {
-		minHeight: 48,
-		borderRadius: 12,
+		minHeight: 50,
+		borderRadius: 14,
+		borderCurve: 'continuous',
 		alignItems: 'center',
 		justifyContent: 'center',
 		paddingHorizontal: 16
 	},
 	primary: { backgroundColor: colors.action },
-	secondary: { backgroundColor: colors.surface },
+	secondary: { backgroundColor: colors.preview },
+	destructive: { backgroundColor: colors.surface },
 	primaryText: { color: '#FFFFFF', fontSize: 17, fontWeight: '600' },
 	secondaryText: { color: colors.action, fontSize: 17, fontWeight: '600' },
+	destructiveText: { color: colors.warning, fontSize: 17, fontWeight: '600' },
 	field: { gap: 6 },
 	label: { fontSize: 14, color: colors.secondary },
 	check: { color: colors.warning, fontWeight: '600' },
 	inputCheck: { borderWidth: 2, borderColor: colors.warning },
 	input: {
-		minHeight: 48,
+		minHeight: 50,
 		backgroundColor: colors.surface,
-		borderRadius: 12,
+		borderRadius: 14,
+		borderCurve: 'continuous',
 		paddingHorizontal: 16,
 		fontSize: 17,
 		color: colors.ink
 	},
+	inputLarge: {
+		minHeight: 72,
+		fontSize: 34,
+		fontWeight: '600',
+		fontVariant: ['tabular-nums']
+	},
 	choices: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
 	choice: {
-		minHeight: 44,
+		minHeight: 40,
 		paddingHorizontal: 14,
-		borderRadius: 22,
+		borderRadius: 20,
 		justifyContent: 'center',
 		backgroundColor: colors.surface
 	},
 	choiceSelected: { backgroundColor: colors.action },
 	choiceSelectedText: { fontSize: 17, color: '#FFFFFF', fontWeight: '600' },
-	answer: { fontSize: 48, fontWeight: '700', color: colors.ink, fontVariant: ['tabular-nums'] },
-	answerLabel: { fontSize: 17, color: colors.secondary },
+	answer: {
+		fontSize: 56,
+		fontWeight: '700',
+		letterSpacing: -1,
+		color: colors.ink,
+		fontVariant: ['tabular-nums']
+	},
+	answerLabel: { fontSize: 15, fontWeight: '500', color: colors.secondary },
 	actions: { gap: 8 },
-	preview: { backgroundColor: colors.preview, borderRadius: 14, padding: 16, gap: 4 }
+	tinted: { backgroundColor: colors.preview }
 })
 
+const causedBy = /\s*→ Caused by: /
+
+/**
+ * The message for the user. A native error arrives as "Calling the 'x' function has failed
+ * → Caused by: …"; only the causes are useful.
+ */
 export function errorText(reason: unknown): string {
-	return reason instanceof Error ? reason.message : 'Unexpected error.'
+	if (!(reason instanceof Error)) {
+		return 'Unexpected error.'
+	}
+	const causes = reason.message.split(causedBy).slice(1)
+	return causes.length > 0 ? causes.join(': ') : reason.message
+}
+
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+/** "Today", "Yesterday", "Oct 1", or "Oct 1, 2025" for another year. Dates are `YYYY-MM-DD`. */
+export function formatDay(date: string, now: string): string {
+	if (date === now) {
+		return 'Today'
+	}
+	const [year, month, day] = date.split('-').map(Number)
+	const [nowYear, nowMonth, nowDay] = now.split('-').map(Number)
+	const days =
+		(Date.UTC(nowYear ?? 0, (nowMonth ?? 1) - 1, nowDay) -
+			Date.UTC(year ?? 0, (month ?? 1) - 1, day)) /
+		86_400_000
+	if (days === 1) {
+		return 'Yesterday'
+	}
+	const text = `${months[(month ?? 1) - 1]} ${day}`
+	return year === nowYear ? text : `${text}, ${year}`
 }
 
 /** Closes a form screen. A screen opened by a direct link has no history to go back to. */
