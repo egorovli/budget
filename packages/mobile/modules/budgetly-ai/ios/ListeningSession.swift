@@ -78,7 +78,7 @@ actor SpeechController {
       throw NotListeningException()
     }
     session = nil
-    return await current.stop()
+    return try await current.stop()
   }
 
   func cancel() async {
@@ -94,7 +94,7 @@ actor SpeechController {
   private func captureLost(sessionID: UUID) async {
     guard let current = session, current.id == sessionID else { return }
     session = nil
-    interruptedText = await current.stop()
+    interruptedText = (try? await current.stop()) ?? ""
   }
 }
 
@@ -157,12 +157,13 @@ final class ListeningSession: @unchecked Sendable {
     }
   }
 
-  func stop() async -> String {
+  func stop() async throws -> String {
     stopCapture()
-    let text = await recognizer?.finish() ?? ""
-    recognizer = nil
-    deactivateAudioSession()
-    return text
+    defer {
+      recognizer = nil
+      deactivateAudioSession()
+    }
+    return try await recognizer?.finish() ?? ""
   }
 
   func cancel() async {
@@ -196,6 +197,13 @@ final class ListeningSession: @unchecked Sendable {
           contextualStrings: contextualStrings,
           transcript: transcript
         )
+      } catch is AnalyzerRecognizer.AnalyzerFormatUnavailable {
+        return try makeLegacy(
+          resolved: Locale(identifier: locale),
+          locale: locale,
+          contextualStrings: contextualStrings,
+          transcript: transcript
+        )
       } catch let error as AudioSessionException {
         throw error
       } catch {
@@ -203,20 +211,35 @@ final class ListeningSession: @unchecked Sendable {
       }
 
     case .legacy(let resolved):
-      guard let recognizer = SFSpeechRecognizer(locale: resolved),
-        recognizer.supportsOnDeviceRecognition
-      else {
-        throw SpeechUnsupportedException(locale)
-      }
-      guard recognizer.isAvailable else {
-        throw SpeechUnavailableException(locale)
-      }
-      return LegacyRecognizer(
-        recognizer: recognizer,
+      return try makeLegacy(
+        resolved: resolved,
+        locale: locale,
         contextualStrings: contextualStrings,
         transcript: transcript
       )
     }
+  }
+
+  private func makeLegacy(
+    resolved: Locale,
+    locale: String,
+    contextualStrings: [String],
+    transcript: TranscriptAccumulator
+  ) throws -> any LiveRecognizer {
+    guard let recognizer = SFSpeechRecognizer(locale: resolved),
+      recognizer.supportsOnDeviceRecognition
+    else {
+      throw SpeechUnsupportedException(locale)
+    }
+    guard recognizer.isAvailable else {
+      throw SpeechUnavailableException(locale)
+    }
+    return LegacyRecognizer(
+      recognizer: recognizer,
+      locale: locale,
+      contextualStrings: contextualStrings,
+      transcript: transcript
+    )
   }
 
   private func activateAudioSession() throws {

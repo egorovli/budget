@@ -26,15 +26,21 @@ Pod::Spec.new do |s|
   s.libraries       = 'c++'
 
   # libneedle.a has no x86_64 simulator slice; Apple Silicon simulators are arm64.
-  s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
+  # The `module CNeedle` map, written by scripts/fetch-needle.sh outside the xcframework.
+  # A map inside the xcframework is found only after CocoaPods copies it, which can be after
+  # Swift compiles; then `canImport(CNeedle)` is silently false. The app target needs the path
+  # too: Swift loads the internal imports of a module without library evolution.
+  cneedle = "$(inherited) \"#{File.join(__dir__, 'CNeedle')}\""
+
+  s.user_target_xcconfig = {
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'x86_64',
+    'SWIFT_INCLUDE_PATHS' => cneedle
+  }
 
   s.pod_target_xcconfig = {
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'x86_64',
     'DEFINES_MODULE' => 'YES',
     'SWIFT_COMPILATION_MODE' => 'wholemodule',
-    # CocoaPods copies the static xcframework slice (with Headers/module.modulemap for
-    # `module CNeedle`) to this directory before compiling.
-    # UNVERIFIED: that Swift finds the CNeedle module map through this path (and HEADER_SEARCH_PATHS).
-    'SWIFT_INCLUDE_PATHS' => '$(inherited) "${PODS_XCFRAMEWORKS_BUILD_DIR}/BudgetlyAI/Headers"'
+    'SWIFT_INCLUDE_PATHS' => cneedle
   }
 end

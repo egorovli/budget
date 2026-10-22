@@ -1,6 +1,6 @@
 import Foundation
 #if canImport(CNeedle)
-import CNeedle
+internal import CNeedle
 #endif
 
 /// Needle 3 (Cactus Compute, Apache-2.0) through its C API.

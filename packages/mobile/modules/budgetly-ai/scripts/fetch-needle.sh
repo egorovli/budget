@@ -51,12 +51,6 @@ fetch "${SIMULATOR_LIB}" "${STAGE}/ios-arm64-simulator/libneedle.a" "${SIMULATOR
 for slice in ios-arm64 ios-arm64-simulator; do
 	mkdir -p "${STAGE}/${slice}/Headers"
 	cp "${WORK}/needle.h" "${STAGE}/${slice}/Headers/needle.h"
-	cat >"${STAGE}/${slice}/Headers/module.modulemap" <<'EOF'
-module CNeedle {
-    header "needle.h"
-    export *
-}
-EOF
 done
 
 cat >"${STAGE}/Info.plist" <<'EOF'
@@ -115,4 +109,14 @@ fi
 
 rm -rf "${OUTPUT}"
 mv "${STAGE}" "${OUTPUT}"
+
+# The module map lives outside the xcframework. CocoaPods copies the xcframework headers to a
+# second header search path, and two maps for one module fail with "Redefinition of module".
+mkdir -p "${MODULE_DIR}/ios/CNeedle"
+cat >"${MODULE_DIR}/ios/CNeedle/module.modulemap" <<'EOF'
+module CNeedle {
+    header "../Needle.xcframework/ios-arm64/Headers/needle.h"
+    export *
+}
+EOF
 echo "Assembled ${OUTPUT}"

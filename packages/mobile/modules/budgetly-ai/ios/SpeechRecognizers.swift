@@ -14,7 +14,8 @@ protocol LiveRecognizer: AnyObject, Sendable {
   /// Called on the audio tap thread, one buffer at a time.
   func append(_ buffer: AVAudioPCMBuffer)
   /// Ends the audio, waits for the last result, and returns the finalized text.
-  func finish() async -> String
+  /// Throws when the recognizer failed and heard nothing.
+  func finish() async throws -> String
   func cancel() async
 }
 
@@ -212,6 +213,10 @@ final class AnalyzerRecognizer: LiveRecognizer, @unchecked Sendable {
     self.transcript = transcript
   }
 
+  /// The module gives no audio format, even with installed assets (seen on the iOS 27
+  /// simulator). The session then uses the on-device SFSpeechRecognizer.
+  struct AnalyzerFormatUnavailable: Error {}
+
   static func make(
     route: AnalyzerRoute,
     inputFormat: AVAudioFormat,
@@ -259,7 +264,7 @@ final class AnalyzerRecognizer: LiveRecognizer, @unchecked Sendable {
           considering: inputFormat
         )
       else {
-        throw AudioSessionException("the speech model accepts no audio format")
+        throw AnalyzerFormatUnavailable()
       }
 
       let analyzer = SpeechAnalyzer(modules: [module])
@@ -310,7 +315,7 @@ final class AnalyzerRecognizer: LiveRecognizer, @unchecked Sendable {
     }
   }
 
-  func finish() async -> String {
+  func finish() async throws -> String {
     input.finish()
     do {
       // Finalizes volatile results, then ends the results sequences of the modules.
@@ -336,11 +341,20 @@ final class LegacyRecognizer: LiveRecognizer, @unchecked Sendable {
   private let request = SFSpeechAudioBufferRecognitionRequest()
   private let transcript: TranscriptAccumulator
   private let done = OneShotSignal()
+  private let locale: String
   /// Set once in init; read later from the controller only.
   private var task: SFSpeechRecognitionTask?
+  /// Written by the result handler before `done` fires; read after `done`.
+  private var failure: (any Error)?
 
-  init(recognizer: SFSpeechRecognizer, contextualStrings: [String], transcript: TranscriptAccumulator) {
+  init(
+    recognizer: SFSpeechRecognizer,
+    locale: String,
+    contextualStrings: [String],
+    transcript: TranscriptAccumulator
+  ) {
     self.transcript = transcript
+    self.locale = locale
 
     // Never use the server.
     request.requiresOnDeviceRecognition = true
@@ -361,8 +375,9 @@ final class LegacyRecognizer: LiveRecognizer, @unchecked Sendable {
         done.fire()
       }
     }
-    if error != nil {
+    if let error {
       // "No speech detected" also arrives as an error. The text so far is kept.
+      failure = error
       done.fire()
     }
   }
@@ -371,11 +386,23 @@ final class LegacyRecognizer: LiveRecognizer, @unchecked Sendable {
     request.append(buffer)
   }
 
-  func finish() async -> String {
+  func finish() async throws -> String {
     request.endAudio()
     await done.wait(atMost: finalResultTimeout)
     task?.cancel()
-    return transcript.commit()
+    let text = transcript.commit()
+    // An empty text with a real failure is an error, not silence. Example: the iOS 27 simulator
+    // has no usable on-device model, so every request fails at once.
+    if text.isEmpty, let failure, !isNoSpeech(failure) {
+      throw SpeechUnavailableException(locale).causedBy(failure)
+    }
+    return text
+  }
+
+  /// kAFAssistantErrorDomain 1110: "No speech detected".
+  private func isNoSpeech(_ error: any Error) -> Bool {
+    let error = error as NSError
+    return error.domain == "kAFAssistantErrorDomain" && error.code == 1110
   }
 
   func cancel() async {

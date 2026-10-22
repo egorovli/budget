@@ -1,2 +1,3 @@
 # Built by scripts/fetch-needle.sh from pinned, hash-checked downloads.
 ios/Needle.xcframework/
+ios/CNeedle/

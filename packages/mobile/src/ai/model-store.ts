@@ -48,7 +48,8 @@ export async function download(
 			partial.delete()
 		}
 		const task = File.createDownloadTask(file.url, partial, {
-			onProgress: ({ bytesWritten }) => onProgress({ received: done + bytesWritten, total })
+			// iOS sends Int64 progress, which arrives as a BigInt despite the declared number type.
+			onProgress: ({ bytesWritten }) => onProgress({ received: done + Number(bytesWritten), total })
 		})
 		const cancel = () => task.cancel()
 		signal.addEventListener('abort', cancel)
