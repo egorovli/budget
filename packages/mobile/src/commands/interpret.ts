@@ -43,16 +43,31 @@ async function runModel(
 ): Promise<{ raw: string | null; model: ModelName | null }> {
 	const tools = JSON.stringify(toolDefinitions(context))
 	const system = systemPrompt(context)
+	let appleError: unknown = null
 	if (native && only !== 'needle') {
 		const status = await native.getAppleModelStatus()
 		if (status.available) {
-			return { raw: await native.interpretWithAppleModel(system, tools, sentence), model: 'apple' }
+			try {
+				return {
+					raw: await native.interpretWithAppleModel(system, tools, sentence),
+					model: 'apple'
+				}
+			} catch (error) {
+				// A guardrail or a busy session: Needle reads the sentence instead.
+				if (only === 'apple') {
+					throw error
+				}
+				appleError = error
+			}
 		}
 	}
 	if (only === 'apple') {
 		return { raw: null, model: null }
 	}
 	const raw = await runNeedle(system, tools, sentence)
+	if (raw === null && appleError) {
+		throw appleError
+	}
 	return { raw, model: raw === null ? null : 'needle' }
 }
 
